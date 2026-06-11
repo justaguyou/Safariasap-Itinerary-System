@@ -3,6 +3,22 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <link href="favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
   <title>Safari ASAP — Admin Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -15,12 +31,14 @@
     --sage:       #4A5E4A;
     --sage-light: #6B7F6B;
     --sage-dark:  #2E3B2E;
-    --sand:       #C8A96E;
+    --sand:       #3C2414;
+    --sand2:       #F19233;
     --sand-light: #E8D5A8;
     --sand-pale:  #F5EDD6;
     --earth:      #6B4226;
     --earth-dark: #3D2011;
     --linen:      #FAF7F0;
+    --white:      #ffffff;
     --warm-gray:  #8C8070;
     --border:     rgba(100,80,60,.15);
     --ff-head:    'Oswald', sans-serif;
@@ -74,6 +92,11 @@
     align-items: center;
     gap: 14px;
   }
+  .visual-brand img {
+    
+    width: auto;
+    height: 100px;
+  }
   .brand-mark {
     width: 48px;
     height: 48px;
@@ -112,7 +135,7 @@
     font-size: .75rem;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: var(--sand);
+    color: var(--sand2);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -138,11 +161,11 @@
   }
   .visual-headline h1 em {
     font-style: normal;
-    color: var(--sand);
+    color: var(--sand2);
   }
   .visual-headline p {
     font-size: .88rem;
-    color: rgba(255,255,255,.65);
+    color: var(--white);
     line-height: 1.7;
     max-width: 380px;
     font-weight: 300;
@@ -152,27 +175,27 @@
     gap: 2rem;
   }
   .vstat {
-    border-left: 2px solid var(--sand);
+    border-left: 2px solid var(--white);
     padding-left: .8rem;
   }
   .vstat-num {
     font-family: var(--ff-head);
     font-size: 1.6rem;
     font-weight: 600;
-    color: var(--sand-light);
+    color: var(--white);
     line-height: 1;
   }
   .vstat-lbl {
     font-size: .65rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: rgba(255,255,255,.4);
+    color:var(--white);
     margin-top: 3px;
   }
 
   /* ── RIGHT PANEL — FORM ── */
   .form-panel {
-    background: var(--linen);
+    background: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -266,8 +289,8 @@
   .btn-login {
     width: 100%;
     padding: 1rem;
-    background: var(--sage-dark);
-    color: var(--sand-light);
+    background: var(--sand);
+    color: var(--white);
     font-family: var(--ff-head);
     font-size: .95rem;
     font-weight: 600;
@@ -283,7 +306,7 @@
     margin-top: 1.8rem;
     border-radius: 0;
   }
-  .btn-login:hover { background: var(--sage); transform: translateY(-1px); }
+  .btn-login:hover { background: var(--sand2); transform: translateY(-1px); }
   .btn-login:active { transform: translateY(0); }
   .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
@@ -397,10 +420,9 @@
     <div class="visual-overlay"></div>
     <div class="visual-content">
       <div class="visual-brand">
-        <div class="brand-mark">SA</div>
+        <img src="logo.jpeg" alt="">
         <div>
-          <div class="brand-name">Safari <span>ASAP</span></div>
-          <div class="brand-sub">Itinerary Manager</div>
+          
         </div>
       </div>
 
@@ -431,7 +453,7 @@
   <div class="form-panel">
     <div class="form-header">
       <h2>Sign In</h2>
-      <p>Safari ASAP Admin — <a href="#">safariasp.com</a></p>
+      <p>SAFARI ASAP Admin — <a href="#">safariasp.com</a></p>
     </div>
 
     <div class="alert alert-error" id="alertError">
@@ -467,12 +489,12 @@
         <i class="fa-solid fa-arrow-right" id="btnLoginArrow"></i>
       </button>
 
-      <div class="divider">or</div>
+      <!-- <div class="divider">or</div> -->
 
-      <button class="btn-magic" onclick="showMagicPanel()">
+      <!-- <button class="btn-magic" onclick="showMagicPanel()">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
         Sign in with Magic Link
-      </button>
+      </button> -->
     </div>
 
     <!-- MAGIC LINK -->
@@ -481,7 +503,7 @@
         <label>Email Address</label>
         <div class="field-wrap">
           <i class="fa-solid fa-envelope"></i>
-          <input type="email" id="magicEmail" placeholder="you@safariasp.com" autocomplete="email"/>
+          <input type="email" id="magicEmail" placeholder="info@safariasp.com" autocomplete="email"/>
         </div>
       </div>
       <button class="btn-login" id="btnMagic" onclick="doMagicLink()">
