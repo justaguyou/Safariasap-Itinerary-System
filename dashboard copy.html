@@ -526,8 +526,6 @@
       <button class="modal-close" onclick="closeModal('itinModal')">&times;</button>
     </div>
     <div class="modal-body">
-
-      <!-- TAB BUTTONS -->
       <div class="tabs" id="itinTabs">
         <button class="tab-btn active" onclick="switchTab('itin',0)">Overview</button>
         <button class="tab-btn" onclick="switchTab('itin',1)">Welcome Letter</button>
@@ -537,280 +535,285 @@
         <button class="tab-btn" onclick="switchTab('itin',5)">Pricing</button>
         <button class="tab-btn" onclick="switchTab('itin',6)">PDF Style</button>
       </div>
-
-      <!-- *** FIX: all tab panels wrapped in a single container *** -->
-      <div id="itinTabPanels">
-
-        <!-- TAB 0: OVERVIEW -->
-        <div class="tab-panel active" id="itinTab0">
-          <div class="form-section">
-            <div class="form-section-title">Itinerary Details</div>
-            <div class="form-grid">
-              <div class="field form-full">
-                <label>Itinerary Title <span class="req">*</span></label>
-                <input class="f-input" type="text" id="it_title" placeholder="e.g. 7-Day Serengeti Classic Safari" oninput="autoItinSlug()"/>
-              </div>
-              <div class="field">
-                <label>Slug</label>
-                <input class="f-input" type="text" id="it_slug" placeholder="auto-generated"/>
-              </div>
-              <div class="field">
-                <label>Reference Code</label>
-                <input class="f-input" type="text" id="it_ref" placeholder="e.g. SA-25-0042" readonly style="background:#f0ebe3"/>
-              </div>
-              <div class="field">
-                <label>Client Name</label>
-                <input class="f-input" type="text" id="it_client_name" placeholder="e.g. Smith Family"/>
-              </div>
-              <div class="field">
-                <label>Client Email</label>
-                <input class="f-input" type="email" id="it_client_email" placeholder="smith@email.com"/>
-              </div>
-              <div class="field">
-                <label>Duration (Days) <span class="req">*</span></label>
-                <input class="f-input" type="number" id="it_duration_days" min="1" max="90" placeholder="7" oninput="syncDurationLabel()"/>
-              </div>
-              <div class="field">
-                <label>Duration Label</label>
-                <input class="f-input" type="text" id="it_duration_label" placeholder="e.g. 7 Days / 6 Nights"/>
-              </div>
-              <div class="field">
-                <label>Group Size</label>
-                <input class="f-input" type="number" id="it_group_size" min="1" placeholder="2"/>
-              </div>
-              <div class="field">
-                <label>Start Date</label>
-                <input class="f-input" type="date" id="it_start_date"/>
-              </div>
-              <div class="field">
-                <label>End Date</label>
-                <input class="f-input" type="date" id="it_end_date"/>
-              </div>
-              <div class="field">
-                <label>Status</label>
-                <select class="f-select" id="it_status">
-                  <option value="draft">Draft</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="sent">Sent to Client</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="form-section">
-            <div class="form-section-title">Hero Image</div>
-            <div class="img-zone" id="itinHeroZone" ondragover="ev_dragover(event,'itinHero')" ondragleave="ev_dragleave(event,'itinHero')" ondrop="ev_drop(event,'itinHero')">
-              <div class="img-trigger" id="itinHeroTrigger">
-                <input type="file" id="itinHeroFile" accept="image/*" onchange="handleItinImg(event)"/>
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <p>Tap or drop hero image</p>
-                <small>JPG &middot; PNG &middot; WEBP &middot; max 10 MB</small>
-              </div>
-              <div class="img-preview-panel" id="itinHeroPreview">
-                <img id="itinHeroPreviewImg" src="" alt=""/>
-                <div class="img-preview-overlay">
-                  <span class="img-preview-name" id="itinHeroPreviewName"></span>
-                  <button type="button" class="btn btn-xs btn-sage" onclick="clearItinImg()">Remove</button>
-                </div>
-              </div>
-              <div class="img-url-row">
-                <span class="url-label">Saved URL</span>
-                <input type="text" id="it_hero_image" placeholder="Uploads automatically" readonly/>
-              </div>
-            </div>
-            <div id="itinHeroUploadStatus" class="upload-status-bar" style="display:none"></div>
-          </div>
-          <div class="form-section">
-            <div class="form-section-title">Overview</div>
-            <div class="info-note">
-              <i class="fa-solid fa-circle-info"></i>
-              <div>This overview text appears on the <strong>main itinerary page</strong> of the PDF — after the welcome letter. Use it to introduce the trip highlights and theme.</div>
+<div id="itinTabPanels">
+      <!-- TAB 0: OVERVIEW -->
+      <div class="tab-panel active" id="itinTab0">
+        <div class="form-section">
+          <div class="form-section-title">Itinerary Details</div>
+          <div class="form-grid">
+            <div class="field form-full">
+              <label>Itinerary Title <span class="req">*</span></label>
+              <input class="f-input" type="text" id="it_title" placeholder="e.g. 7-Day Serengeti Classic Safari" oninput="autoItinSlug()"/>
             </div>
             <div class="field">
-              <label>Introduction / Overview Text</label>
-              <textarea class="f-textarea" id="it_overview" rows="5" placeholder="Overview paragraph that appears on the main itinerary page of the PDF…"></textarea>
+              <label>Slug</label>
+              <input class="f-input" type="text" id="it_slug" placeholder="auto-generated"/>
             </div>
             <div class="field">
-              <label>Internal Notes (not shown on PDF)</label>
-              <textarea class="f-textarea" id="it_notes" rows="3" placeholder="Internal booking notes, special requests…"></textarea>
+              <label>Reference Code</label>
+              <input class="f-input" type="text" id="it_ref" placeholder="e.g. SA-25-0042" readonly style="background:#f0ebe3"/>
+            </div>
+            <div class="field">
+              <label>Client Name</label>
+              <input class="f-input" type="text" id="it_client_name" placeholder="e.g. Smith Family"/>
+            </div>
+            <div class="field">
+              <label>Client Email</label>
+              <input class="f-input" type="email" id="it_client_email" placeholder="smith@email.com"/>
+            </div>
+            <div class="field">
+              <label>Duration (Days) <span class="req">*</span></label>
+              <input class="f-input" type="number" id="it_duration_days" min="1" max="90" placeholder="7" oninput="syncDurationLabel()"/>
+            </div>
+            <div class="field">
+              <label>Duration Label</label>
+              <input class="f-input" type="text" id="it_duration_label" placeholder="e.g. 7 Days / 6 Nights"/>
+            </div>
+            <div class="field">
+              <label>Group Size</label>
+              <input class="f-input" type="number" id="it_group_size" min="1" placeholder="2"/>
+            </div>
+            <div class="field">
+              <label>Start Date</label>
+              <input class="f-input" type="date" id="it_start_date"/>
+            </div>
+            <div class="field">
+              <label>End Date</label>
+              <input class="f-input" type="date" id="it_end_date"/>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select class="f-select" id="it_status">
+                <option value="draft">Draft</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="sent">Sent to Client</option>
+                <option value="archived">Archived</option>
+              </select>
             </div>
           </div>
-          <div class="form-section">
-            <div class="form-section-title">Tour Highlights</div>
-            <div class="dyn-list" id="itinHighlightList"></div>
-            <button type="button" class="dyn-add-btn" onclick="addDynItem('itinHighlightList','e.g. Great Migration crossing')"><i class="fa-solid fa-plus"></i> Add Highlight</button>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Hero Image</div>
+          <div class="img-zone" id="itinHeroZone" ondragover="ev_dragover(event,'itinHero')" ondragleave="ev_dragleave(event,'itinHero')" ondrop="ev_drop(event,'itinHero')">
+            <div class="img-trigger" id="itinHeroTrigger">
+              <input type="file" id="itinHeroFile" accept="image/*" onchange="handleItinImg(event)"/>
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <p>Tap or drop hero image</p>
+              <small>JPG &middot; PNG &middot; WEBP &middot; max 10 MB</small>
+            </div>
+            <div class="img-preview-panel" id="itinHeroPreview">
+              <img id="itinHeroPreviewImg" src="" alt=""/>
+              <div class="img-preview-overlay">
+                <span class="img-preview-name" id="itinHeroPreviewName"></span>
+                <button type="button" class="btn btn-xs btn-sage" onclick="clearItinImg()">Remove</button>
+              </div>
+            </div>
+            <div class="img-url-row">
+              <span class="url-label">Saved URL</span>
+              <input type="text" id="it_hero_image" placeholder="Uploads automatically" readonly/>
+            </div>
           </div>
-        </div><!-- /TAB 0 -->
-
-        <!-- TAB 1: WELCOME LETTER -->
-        <div class="tab-panel" id="itinTab1">
+          <div id="itinHeroUploadStatus" class="upload-status-bar" style="display:none"></div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Overview</div>
           <div class="info-note">
-            <i class="fa-solid fa-envelope-open-text"></i>
-            <div>This welcome letter appears as the <strong>first page</strong> of the PDF — a warm, personal message to your client before they read the itinerary. The itinerary's <strong>hero image</strong> is shown prominently at the top of the welcome page. The welcome page stands alone and does not include any overview or itinerary content.</div>
+            <i class="fa-solid fa-circle-info"></i>
+            <div>This overview text appears on the <strong>main itinerary page</strong> of the PDF — after the welcome letter. Use it to introduce the trip highlights and theme.</div>
           </div>
-          <div class="form-section">
-            <div class="form-section-title">Welcome Letter</div>
-            <div class="form-grid">
-              <div class="field">
-                <label>Greeting / Salutation</label>
-                <input class="f-input" type="text" id="wl_greeting" placeholder="e.g. Dear Smith Family,"/>
-              </div>
-              <div class="field">
-                <label>Closing / Sign-off</label>
-                <input class="f-input" type="text" id="wl_closing" placeholder="e.g. With warm safari wishes,"/>
-              </div>
-              <div class="field">
-                <label>Your Name / Signature</label>
-                <input class="f-input" type="text" id="wl_signature" placeholder="e.g. James Mwangi, Safari Consultant"/>
-              </div>
-              <div class="field">
-                <label>Date Line</label>
-                <input class="f-input" type="text" id="wl_date_line" placeholder="e.g. Arusha, Tanzania — June 2025"/>
+          <div class="field">
+            <label>Introduction / Overview Text</label>
+            <textarea class="f-textarea" id="it_overview" rows="5" placeholder="Overview paragraph that appears on the main itinerary page of the PDF…"></textarea>
+          </div>
+          <div class="field">
+            <label>Internal Notes (not shown on PDF)</label>
+            <textarea class="f-textarea" id="it_notes" rows="3" placeholder="Internal booking notes, special requests…"></textarea>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Tour Highlights</div>
+          <div class="dyn-list" id="itinHighlightList"></div>
+          <button type="button" class="dyn-add-btn" onclick="addDynItem('itinHighlightList','e.g. Great Migration crossing')"><i class="fa-solid fa-plus"></i> Add Highlight</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: WELCOME LETTER -->
+      <div class="tab-panel" id="itinTab1">
+        <div class="info-note">
+          <i class="fa-solid fa-envelope-open-text"></i>
+          <div>This welcome letter appears as the <strong>first page</strong> of the PDF — a warm, personal message to your client before they read the itinerary. The itinerary's <strong>hero image</strong> is shown prominently at the top of the welcome page. The welcome page stands alone and does not include any overview or itinerary content.</div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Welcome Letter</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Greeting / Salutation</label>
+              <input class="f-input" type="text" id="wl_greeting" placeholder="e.g. Dear Smith Family,"/>
+            </div>
+            <div class="field">
+              <label>Closing / Sign-off</label>
+              <input class="f-input" type="text" id="wl_closing" placeholder="e.g. With warm safari wishes,"/>
+            </div>
+            <div class="field">
+              <label>Your Name / Signature</label>
+              <input class="f-input" type="text" id="wl_signature" placeholder="e.g. James Mwangi, Safari Consultant"/>
+            </div>
+            <div class="field">
+              <label>Date Line</label>
+              <input class="f-input" type="text" id="wl_date_line" placeholder="e.g. Arusha, Tanzania — June 2025"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Body of Letter</label>
+            <textarea class="f-textarea" id="wl_body" rows="10" placeholder="Write your personal welcome message here…
+
+Example:
+It is with great pleasure that we present your personalised safari itinerary. Africa has a way of calling to those who have been touched by her magic, and we are honoured to be the ones guiding you through her wild heart.
+
+Over the coming days, you will witness landscapes that have remained unchanged for thousands of years, encounter wildlife in its most natural state, and experience the warmth of Tanzanian hospitality.
+
+This itinerary has been carefully crafted with your interests in mind. Please read through it at your leisure, and do not hesitate to reach out if you have any questions or special requests.
+
+We look forward to welcoming you to the bush."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: ROUTE -->
+      <div class="tab-panel" id="itinTab2">
+        <div class="info-note">
+          <i class="fa-solid fa-road"></i>
+          <div>Build the route by selecting origin and destination stops. These appear in the PDF summary and on day cards.</div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Route Summary</div>
+          <div class="field">
+            <label>Route Summary Text (optional)</label>
+            <textarea class="f-textarea" id="it_route_summary" rows="3" placeholder="e.g. Arusha → Tarangire → Ngorongoro → Serengeti → Arusha"></textarea>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Route Stops</div>
+          <div id="routeStopsList"></div>
+          <button type="button" class="dyn-add-btn" onclick="addRouteStop()"><i class="fa-solid fa-plus"></i> Add Stop</button>
+          <div class="field-hint" style="margin-top:.6rem">Each stop is a destination/area. Drag to reorder (coming soon).</div>
+        </div>
+      </div>
+
+      <!-- TAB 3: DAY-BY-DAY -->
+      <div class="tab-panel" id="itinTab3">
+        <div class="info-note">
+          <i class="fa-solid fa-hotel"></i>
+          <div>Link accommodations and destinations to each day. Select gallery photos from the destination — they appear in an editorial mosaic on each day's PDF page. Accommodation images also appear in a mosaic with the property description and highlights.</div>
+        </div>
+        <div id="itinDaysList"></div>
+        <button type="button" class="dyn-add-btn" onclick="addItinDay()"><i class="fa-solid fa-plus"></i> Add Day</button>
+      </div>
+
+      <!-- TAB 4: INCLUSIONS -->
+      <div class="tab-panel" id="itinTab4">
+        <div class="form-section">
+          <div class="form-section-title"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Included</div>
+          <div class="dyn-list" id="itinInclList"></div>
+          <button type="button" class="dyn-add-btn" onclick="addDynItem('itinInclList','e.g. All park entrance fees')"><i class="fa-solid fa-plus"></i> Add</button>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i> Not Included</div>
+          <div class="dyn-list" id="itinExclList"></div>
+          <button type="button" class="dyn-add-btn" onclick="addDynItem('itinExclList','e.g. International flights')"><i class="fa-solid fa-plus"></i> Add</button>
+        </div>
+      </div>
+
+      <!-- TAB 5: PRICING -->
+      <div class="tab-panel" id="itinTab5">
+        <div class="form-section">
+          <div class="form-section-title">Pricing</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Total Price</label>
+              <div style="display:flex;align-items:center;border:1.5px solid var(--border);background:#FDFAF5">
+                <span style="padding:0 .7rem;font-size:.85rem;font-weight:700;color:var(--earth-d);border-right:1px solid var(--border);height:38px;display:flex;align-items:center;font-family:var(--ff-h)">$</span>
+                <input type="number" id="it_total_price" placeholder="4500" min="0" style="flex:1;padding:.65rem .85rem;border:none;background:transparent;font-size:.88rem;font-weight:600;color:var(--earth-d);font-family:var(--ff-b)"/>
               </div>
             </div>
             <div class="field">
-              <label>Body of Letter</label>
-              <textarea class="f-textarea" id="wl_body" rows="10" placeholder="Write your personal welcome message here…"></textarea>
+              <label>Currency</label>
+              <select class="f-select" id="it_currency">
+                <option value="USD">USD — US Dollar</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="GBP">GBP — British Pound</option>
+                <option value="TZS">TZS — Tanzanian Shilling</option>
+              </select>
             </div>
-          </div>
-        </div><!-- /TAB 1 -->
-
-        <!-- TAB 2: ROUTE -->
-        <div class="tab-panel" id="itinTab2">
-          <div class="info-note">
-            <i class="fa-solid fa-road"></i>
-            <div>Build the route by selecting origin and destination stops. These appear in the PDF summary and on day cards.</div>
-          </div>
-          <div class="form-section">
-            <div class="form-section-title">Route Summary</div>
             <div class="field">
-              <label>Route Summary Text (optional)</label>
-              <textarea class="f-textarea" id="it_route_summary" rows="3" placeholder="e.g. Arusha → Tarangire → Ngorongoro → Serengeti → Arusha"></textarea>
+              <label>Price Per</label>
+              <select class="f-select" id="it_price_per">
+                <option value="person">Per Person</option>
+                <option value="group">Per Group</option>
+                <option value="couple">Per Couple</option>
+              </select>
             </div>
           </div>
-          <div class="form-section">
-            <div class="form-section-title">Route Stops</div>
-            <div id="routeStopsList"></div>
-            <button type="button" class="dyn-add-btn" onclick="addRouteStop()"><i class="fa-solid fa-plus"></i> Add Stop</button>
-            <div class="field-hint" style="margin-top:.6rem">Each stop is a destination/area. Drag to reorder (coming soon).</div>
-          </div>
-        </div><!-- /TAB 2 -->
+        </div>
+      </div>
 
-        <!-- TAB 3: DAY-BY-DAY -->
-        <div class="tab-panel" id="itinTab3">
-          <div class="info-note">
-            <i class="fa-solid fa-hotel"></i>
-            <div>Link accommodations and destinations to each day. Select gallery photos from the destination — they appear in an editorial mosaic on each day's PDF page. Accommodation images also appear in a mosaic with the property description and highlights.</div>
-          </div>
-          <div id="itinDaysList"></div>
-          <button type="button" class="dyn-add-btn" onclick="addItinDay()"><i class="fa-solid fa-plus"></i> Add Day</button>
-        </div><!-- /TAB 3 -->
-
-        <!-- TAB 4: INCLUSIONS -->
-        <div class="tab-panel" id="itinTab4">
-          <div class="form-section">
-            <div class="form-section-title"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Included</div>
-            <div class="dyn-list" id="itinInclList"></div>
-            <button type="button" class="dyn-add-btn" onclick="addDynItem('itinInclList','e.g. All park entrance fees')"><i class="fa-solid fa-plus"></i> Add</button>
-          </div>
-          <div class="form-section">
-            <div class="form-section-title"><i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i> Not Included</div>
-            <div class="dyn-list" id="itinExclList"></div>
-            <button type="button" class="dyn-add-btn" onclick="addDynItem('itinExclList','e.g. International flights')"><i class="fa-solid fa-plus"></i> Add</button>
-          </div>
-        </div><!-- /TAB 4 -->
-
-        <!-- TAB 5: PRICING -->
-        <div class="tab-panel" id="itinTab5">
-          <div class="form-section">
-            <div class="form-section-title">Pricing</div>
-            <div class="form-grid">
-              <div class="field">
-                <label>Total Price</label>
-                <div style="display:flex;align-items:center;border:1.5px solid var(--border);background:#FDFAF5">
-                  <span style="padding:0 .7rem;font-size:.85rem;font-weight:700;color:var(--earth-d);border-right:1px solid var(--border);height:38px;display:flex;align-items:center;font-family:var(--ff-h)">$</span>
-                  <input type="number" id="it_total_price" placeholder="4500" min="0" style="flex:1;padding:.65rem .85rem;border:none;background:transparent;font-size:.88rem;font-weight:600;color:var(--earth-d);font-family:var(--ff-b)"/>
-                </div>
+      <!-- TAB 6: PDF STYLE -->
+      <div class="tab-panel" id="itinTab6">
+        <div class="form-section">
+          <div class="form-section-title">Choose PDF Export Style</div>
+          <div class="pdf-style-grid" id="pdfStyleGrid">
+            <div class="pdf-card selected" data-style="classic" onclick="selectPdfStyle(this)">
+              <div class="pdf-card-preview" style="background:#F5EDD6">
+                <svg width="80" height="110" viewBox="0 0 80 110">
+                  <rect width="80" height="110" fill="#F5EDD6"/>
+                  <rect x="0" y="0" width="80" height="28" fill="#2E3B2E"/>
+                  <rect x="8" y="8" width="32" height="3" rx="1" fill="#C8A96E"/>
+                  <rect x="8" y="15" width="20" height="2" rx="1" fill="rgba(232,213,168,.4)"/>
+                  <rect x="8" y="34" width="64" height="2" rx="1" fill="#C8A96E"/>
+                  <rect x="8" y="42" width="40" height="1.5" rx="1" fill="#6B4226"/>
+                  <rect x="8" y="47" width="60" height="1" rx="0.5" fill="#8C8070" opacity=".6"/>
+                  <rect x="8" y="50" width="55" height="1" rx="0.5" fill="#8C8070" opacity=".4"/>
+                  <rect x="8" y="58" width="30" height="1.5" rx="1" fill="#6B4226"/>
+                  <rect x="8" y="100" width="80" height="10" fill="#2E3B2E" opacity=".5"/>
+                </svg>
               </div>
-              <div class="field">
-                <label>Currency</label>
-                <select class="f-select" id="it_currency">
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="EUR">EUR — Euro</option>
-                  <option value="GBP">GBP — British Pound</option>
-                  <option value="TZS">TZS — Tanzanian Shilling</option>
-                </select>
+              <div class="pdf-card-name">Classic</div>
+              <div class="pdf-card-desc">Dark header, clean layout</div>
+            </div>
+            <div class="pdf-card" data-style="minimal" onclick="selectPdfStyle(this)">
+              <div class="pdf-card-preview" style="background:#fff">
+                <svg width="80" height="110" viewBox="0 0 80 110">
+                  <rect width="80" height="110" fill="#fff"/>
+                  <rect x="8" y="8" width="2" height="94" fill="#C8A96E"/>
+                  <rect x="16" y="10" width="50" height="3" rx="1" fill="#3D2011"/>
+                  <rect x="16" y="17" width="30" height="1.5" rx="1" fill="#8C8070"/>
+                  <rect x="16" y="26" width="44" height="1.5" rx="1" fill="#6B4226"/>
+                  <rect x="16" y="31" width="56" height="1" rx="0.5" fill="#aaa" opacity=".7"/>
+                  <rect x="16" y="34" width="50" height="1" rx="0.5" fill="#aaa" opacity=".5"/>
+                </svg>
               </div>
-              <div class="field">
-                <label>Price Per</label>
-                <select class="f-select" id="it_price_per">
-                  <option value="person">Per Person</option>
-                  <option value="group">Per Group</option>
-                  <option value="couple">Per Couple</option>
-                </select>
+              <div class="pdf-card-name">Minimal</div>
+              <div class="pdf-card-desc">Clean white, accent strip</div>
+            </div>
+            <div class="pdf-card" data-style="bold" onclick="selectPdfStyle(this)">
+              <div class="pdf-card-preview" style="background:#2E3B2E">
+                <svg width="80" height="110" viewBox="0 0 80 110">
+                  <rect width="80" height="110" fill="#2E3B2E"/>
+                  <rect x="8" y="8" width="64" height="26" fill="rgba(200,169,110,.15)"/>
+                  <rect x="12" y="13" width="36" height="3" rx="1" fill="#C8A96E"/>
+                  <rect x="12" y="20" width="22" height="2" rx="1" fill="rgba(232,213,168,.4)"/>
+                </svg>
               </div>
+              <div class="pdf-card-name">Bold</div>
+              <div class="pdf-card-desc">Dark background, golden accents</div>
             </div>
           </div>
-        </div><!-- /TAB 5 -->
+          <input type="hidden" id="it_pdf_style" value="classic"/>
+        </div>
+      </div>
+      </div>
 
-        <!-- TAB 6: PDF STYLE -->
-        <div class="tab-panel" id="itinTab6">
-          <div class="form-section">
-            <div class="form-section-title">Choose PDF Export Style</div>
-            <div class="pdf-style-grid" id="pdfStyleGrid">
-              <div class="pdf-card selected" data-style="classic" onclick="selectPdfStyle(this)">
-                <div class="pdf-card-preview" style="background:#F5EDD6">
-                  <svg width="80" height="110" viewBox="0 0 80 110">
-                    <rect width="80" height="110" fill="#F5EDD6"/>
-                    <rect x="0" y="0" width="80" height="28" fill="#2E3B2E"/>
-                    <rect x="8" y="8" width="32" height="3" rx="1" fill="#C8A96E"/>
-                    <rect x="8" y="15" width="20" height="2" rx="1" fill="rgba(232,213,168,.4)"/>
-                    <rect x="8" y="34" width="64" height="2" rx="1" fill="#C8A96E"/>
-                    <rect x="8" y="42" width="40" height="1.5" rx="1" fill="#6B4226"/>
-                    <rect x="8" y="47" width="60" height="1" rx="0.5" fill="#8C8070" opacity=".6"/>
-                    <rect x="8" y="50" width="55" height="1" rx="0.5" fill="#8C8070" opacity=".4"/>
-                    <rect x="8" y="58" width="30" height="1.5" rx="1" fill="#6B4226"/>
-                    <rect x="8" y="100" width="80" height="10" fill="#2E3B2E" opacity=".5"/>
-                  </svg>
-                </div>
-                <div class="pdf-card-name">Classic</div>
-                <div class="pdf-card-desc">Dark header, clean layout</div>
-              </div>
-              <div class="pdf-card" data-style="minimal" onclick="selectPdfStyle(this)">
-                <div class="pdf-card-preview" style="background:#fff">
-                  <svg width="80" height="110" viewBox="0 0 80 110">
-                    <rect width="80" height="110" fill="#fff"/>
-                    <rect x="8" y="8" width="2" height="94" fill="#C8A96E"/>
-                    <rect x="16" y="10" width="50" height="3" rx="1" fill="#3D2011"/>
-                    <rect x="16" y="17" width="30" height="1.5" rx="1" fill="#8C8070"/>
-                    <rect x="16" y="26" width="44" height="1.5" rx="1" fill="#6B4226"/>
-                    <rect x="16" y="31" width="56" height="1" rx="0.5" fill="#aaa" opacity=".7"/>
-                    <rect x="16" y="34" width="50" height="1" rx="0.5" fill="#aaa" opacity=".5"/>
-                  </svg>
-                </div>
-                <div class="pdf-card-name">Minimal</div>
-                <div class="pdf-card-desc">Clean white, accent strip</div>
-              </div>
-              <div class="pdf-card" data-style="bold" onclick="selectPdfStyle(this)">
-                <div class="pdf-card-preview" style="background:#2E3B2E">
-                  <svg width="80" height="110" viewBox="0 0 80 110">
-                    <rect width="80" height="110" fill="#2E3B2E"/>
-                    <rect x="8" y="8" width="64" height="26" fill="rgba(200,169,110,.15)"/>
-                    <rect x="12" y="13" width="36" height="3" rx="1" fill="#C8A96E"/>
-                    <rect x="12" y="20" width="22" height="2" rx="1" fill="rgba(232,213,168,.4)"/>
-                  </svg>
-                </div>
-                <div class="pdf-card-name">Bold</div>
-                <div class="pdf-card-desc">Dark background, golden accents</div>
-              </div>
-            </div>
-            <input type="hidden" id="it_pdf_style" value="classic"/>
-          </div>
-        </div><!-- /TAB 6 -->
-
-      </div><!-- /itinTabPanels -->
-
-    </div><!-- /modal-body -->
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('itinModal')">Cancel</button>
       <button class="btn btn-sage" onclick="saveItin(false)"><i class="fa-solid fa-floppy-disk"></i> <span id="itinSaveTxt">Save Draft</span></button>
@@ -1013,20 +1016,17 @@ function closeModal(id) {
   document.getElementById(id)?.classList.remove('open');
   document.body.style.overflow = '';
 }
-
-/* ════ FIXED switchTab — scoped to the panel container ════ */
 function switchTab(prefix, idx) {
-  // Scope tab buttons to the named tabs bar
-  const tabs = document.querySelectorAll('#' + prefix + 'Tabs .tab-btn');
-  // Scope panels to the named panels wrapper — this is the key fix
-  const panelContainer = document.getElementById(prefix + 'TabPanels');
-  const panels = panelContainer
-    ? panelContainer.querySelectorAll(':scope > .tab-panel')
-    : [];
+  const container = document.getElementById(prefix + 'TabPanels') 
+                    || document.getElementById(prefix + 'Modal');
+  const tabs   = document.querySelectorAll(`#${prefix}Tabs .tab-btn`);
+  const panels = container 
+    ? container.querySelectorAll('.tab-panel')
+    : document.querySelectorAll(`#${prefix}Tab0, #${prefix}Tab1, #${prefix}Tab2, 
+        #${prefix}Tab3, #${prefix}Tab4, #${prefix}Tab5, #${prefix}Tab6`);
   tabs.forEach((t, i)   => t.classList.toggle('active', i === idx));
   panels.forEach((p, i) => p.classList.toggle('active', i === idx));
 }
-
 function addDynItem(listId, placeholder, value='') {
   const list = document.getElementById(listId);
   const div  = document.createElement('div');
@@ -1229,7 +1229,6 @@ function openItinModal(id) {
   editingItinId = id || null;
   document.getElementById('itinModalTitle').textContent = id ? 'Edit Itinerary' : 'New Itinerary';
   document.getElementById('itinSaveTxt').textContent    = id ? 'Update' : 'Save Draft';
-  // Always reset to tab 0 first
   switchTab('itin', 0);
   resetItinForm();
   if (id) {
@@ -1249,17 +1248,11 @@ function genRef() {
 }
 
 function resetItinForm() {
-  // Clear all simple text/number/date fields
-  [
-    'it_title','it_slug','it_client_name','it_client_email',
-    'it_duration_label','it_overview','it_notes','it_route_summary',
-    'wl_greeting','wl_body','wl_closing','wl_signature','wl_date_line'
-  ].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
+  ['it_title','it_slug','it_ref','it_client_name','it_client_email','it_duration_label',
+   'it_hero_image','it_overview','it_notes','it_route_summary',
+   'wl_greeting','wl_body','wl_closing','wl_signature','wl_date_line'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
   });
-  // Clear ref separately (it's readonly so we set it directly)
-  document.getElementById('it_ref').value         = '';
   document.getElementById('it_duration_days').value = '';
   document.getElementById('it_group_size').value    = '';
   document.getElementById('it_total_price').value   = '';
@@ -1269,64 +1262,37 @@ function resetItinForm() {
   document.getElementById('it_pdf_style').value     = 'classic';
   document.getElementById('it_start_date').value    = '';
   document.getElementById('it_end_date').value      = '';
-  // Clear dynamic lists
   ['itinHighlightList','itinInclList','itinExclList','itinDaysList','routeStopsList'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = '';
+    const el = document.getElementById(id); if (el) el.innerHTML = '';
   });
-  // Reset PDF style cards
   document.querySelectorAll('.pdf-card').forEach(c => c.classList.remove('selected'));
   document.querySelector('.pdf-card[data-style="classic"]')?.classList.add('selected');
-  // Clear hero image zone
   clearItinImgEl();
 }
 
 function populateItinForm(it) {
-  const set = (id, val) => {
-    const el = document.getElementById(id);
-    if (el && val != null) el.value = val;
-  };
-  // Overview tab fields
-  set('it_title',         it.title);
-  set('it_slug',          it.slug);
-  set('it_ref',           it.reference_code);
-  set('it_client_name',   it.client_name);
-  set('it_client_email',  it.client_email);
-  set('it_duration_days', it.duration_days);
-  set('it_duration_label',it.duration_label);
-  set('it_group_size',    it.group_size);
-  set('it_total_price',   it.total_price);
-  set('it_currency',      it.price_currency || 'USD');
-  set('it_price_per',     it.price_per || 'person');
-  set('it_status',        it.status || 'draft');
-  set('it_overview',      it.overview);
-  set('it_notes',         it.notes);
-  set('it_pdf_style',     it.pdf_style || 'classic');
-  set('it_start_date',    it.start_date);
-  set('it_end_date',      it.end_date);
-  // Route tab fields
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+  set('it_title', it.title); set('it_slug', it.slug); set('it_ref', it.reference_code);
+  set('it_client_name', it.client_name); set('it_client_email', it.client_email);
+  set('it_duration_days', it.duration_days); set('it_duration_label', it.duration_label);
+  set('it_group_size', it.group_size); set('it_total_price', it.total_price);
+  set('it_currency', it.price_currency || 'USD'); set('it_price_per', it.price_per || 'person');
+  set('it_status', it.status || 'draft'); set('it_overview', it.overview); set('it_notes', it.notes);
+  set('it_pdf_style', it.pdf_style || 'classic'); set('it_start_date', it.start_date); set('it_end_date', it.end_date);
   set('it_route_summary', it.route_summary);
-  // Welcome letter tab fields — these are separate from overview
   const wl = safeJSON(it.welcome_letter, {});
   set('wl_greeting',  wl.greeting  || '');
   set('wl_body',      wl.body      || '');
   set('wl_closing',   wl.closing   || '');
   set('wl_signature', wl.signature || '');
   set('wl_date_line', wl.date_line || '');
-  // Hero image
-  if (it.hero_image) {
-    setItinHeroPreview(it.hero_image, 'Existing');
-  }
-  // Dynamic lists
+  if (it.hero_image) { setItinHeroPreview(it.hero_image, 'Existing'); }
   safeJSON(it.highlights,[]).forEach(v => addDynItem('itinHighlightList', 'Highlight…', v));
   safeJSON(it.inclusions,[]).forEach(v => addDynItem('itinInclList', 'Included item…', v));
   safeJSON(it.exclusions,[]).forEach(v => addDynItem('itinExclList', 'Excluded item…', v));
   safeJSON(it.route_stops,[]).forEach(s => addRouteStop(s));
   safeJSON(it.days,[]).forEach(day => addItinDay(day));
-  // PDF style
-  document.querySelectorAll('.pdf-card').forEach(c => {
-    c.classList.toggle('selected', c.dataset.style === (it.pdf_style || 'classic'));
-  });
+  document.querySelectorAll('.pdf-card').forEach(c => c.classList.toggle('selected', c.dataset.style === (it.pdf_style || 'classic')));
 }
 
 function selectPdfStyle(card) {
@@ -1337,8 +1303,7 @@ function selectPdfStyle(card) {
 
 function autoItinSlug() {
   if (editingItinId) return;
-  const slug = document.getElementById('it_title').value
-    .toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
+  const slug = document.getElementById('it_title').value.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
   document.getElementById('it_slug').value = slug;
 }
 function syncDurationLabel() {
@@ -1373,7 +1338,7 @@ function collectItinForm() {
     exclusions:      [...document.querySelectorAll('#itinExclList input')].map(i=>i.value.trim()).filter(Boolean),
     route_stops:     collectRouteStops(),
     days:            collectDays(),
-    welcome_letter: {
+    welcome_letter:  {
       greeting:  gv('wl_greeting'),
       body:      gv('wl_body'),
       closing:   gv('wl_closing'),
@@ -1432,7 +1397,7 @@ function addItinDay(day=null) {
   const accomOpts = allAccoms.map(a =>
     `<option value="${a.name}" data-id="${a.id}" ${(day?.accommodation_id===a.id||day?.accommodation_name===a.name)?'selected':''}>${esc(a.name)}</option>`
   ).join('');
-  const selPhotos    = safeJSON(day?.gallery_photos, []);
+  const selPhotos = safeJSON(day?.gallery_photos, []);
   const selAccomImgs = safeJSON(day?.accommodation_images, []);
   div.innerHTML = `<div class="day-card-hdr">
     <span class="day-num">${num}</span>
@@ -1768,8 +1733,7 @@ function openDestModal(id) {
 }
 function autoDestSlug() {
   if (editingDestId) return;
-  document.getElementById('d_slug').value = document.getElementById('d_name').value
-    .toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+  document.getElementById('d_slug').value = document.getElementById('d_name').value.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
 }
 async function saveDest() {
   const name = document.getElementById('d_name').value.trim();
@@ -1844,8 +1808,7 @@ function openAccomModal(id) {
 }
 function autoAccomSlug() {
   if (editingAccomId) return;
-  document.getElementById('ac_slug').value = document.getElementById('ac_name').value
-    .toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+  document.getElementById('ac_slug').value = document.getElementById('ac_name').value.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
 }
 
 function renderAccomImgList() {
@@ -2079,6 +2042,7 @@ function filterAccoms() {
 /* ════════════════════════════════════════════════
    PDF GENERATION
 ════════════════════════════════════════════════ */
+
 async function generateAndDownloadPDF(it) {
   toast('Generating PDF…', 'info');
   try {
@@ -2122,6 +2086,7 @@ function fmtDate(d) {
   try { return new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' }); } catch { return d; }
 }
 
+/* ── Shared PDF head ── */
 function pdfHead(title, bgColor) {
   bgColor = bgColor || '#FAF7F0';
   const outerBg = bgColor === '#2E3B2E' ? '#1a2a1a' : '#E8DCC8';
@@ -2160,15 +2125,18 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
 <div class="pdf-wrap">`;
 }
 
+/* ── Destination photo mosaic ── */
 function buildDestMosaicHTML(photos) {
   if (!photos || !photos.length) return '';
   const shown = photos.slice(0, 6);
   const n = shown.length;
+
   const img = (p, h, extra='') =>
     `<div style="overflow:hidden;height:${h}px;position:relative;flex-shrink:0;${extra}">
        <img src="${esc(p.url)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity=0"/>
        ${p.caption ? `<div style="position:absolute;bottom:0;left:0;right:0;padding:5px 8px;background:linear-gradient(transparent,rgba(0,0,0,.55));font-size:9px;color:rgba(255,255,255,.88);font-style:italic;">${esc(p.caption)}</div>` : ''}
      </div>`;
+
   let grid = '';
   if (n === 1) {
     grid = img(shown[0], 230);
@@ -2179,7 +2147,7 @@ function buildDestMosaicHTML(photos) {
       <div style="overflow:hidden;position:relative;height:210px;">${img(shown[0],210)}</div>
       <div style="display:grid;grid-template-rows:1fr 1fr;gap:3px;">${img(shown[1],103)}${img(shown[2],103)}</div>
     </div>`;
-  } else {
+  } else if (n <= 6) {
     const big = shown[0], smalls = shown.slice(1, 5);
     grid = `<div style="display:grid;grid-template-columns:3fr 2fr;gap:3px;">
       ${img(big, 220)}
@@ -2189,12 +2157,15 @@ function buildDestMosaicHTML(photos) {
   return `<div style="margin:16px 0 4px;border-radius:3px;overflow:hidden;border:1px solid rgba(200,169,110,.25);">${grid}</div>`;
 }
 
+/* ── Accommodation image mosaic ── */
 function buildAccomMosaicHTML(imgUrls) {
   if (!imgUrls || !imgUrls.length) return '';
   const shown = imgUrls.slice(0, 4);
   const n = shown.length;
+
   const imgDiv = (url, h) =>
     `<div style="overflow:hidden;height:${h}px;"><img src="${esc(url)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity=0"/></div>`;
+
   let grid = '';
   if (n === 1) grid = imgDiv(shown[0], 160);
   else if (n === 2) grid = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">${imgDiv(shown[0],150)}${imgDiv(shown[1],150)}</div>`;
@@ -2203,9 +2174,11 @@ function buildAccomMosaicHTML(imgUrls) {
     <div style="display:grid;grid-template-rows:1fr 1fr;gap:3px;">${imgDiv(shown[1],73)}${imgDiv(shown[2],73)}</div>
   </div>`;
   else grid = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">${shown.map(u=>imgDiv(u,110)).join('')}</div>`;
+
   return `<div style="margin:10px 0 4px;border-radius:3px;overflow:hidden;border:1px solid rgba(200,169,110,.2);">${grid}</div>`;
 }
 
+/* ── Accommodation block ── */
 function buildAccomBlockHTML(accomId, accomName, mealPlan, accomImgUrls, style) {
   const ac = resolveAccom(accomId);
   const name       = ac?.name || accomName || '';
@@ -2218,6 +2191,7 @@ function buildAccomBlockHTML(accomId, accomName, mealPlan, accomImgUrls, style) 
   let imgUrls = Array.isArray(accomImgUrls) && accomImgUrls.length
     ? accomImgUrls
     : safeJSON(ac?.images, []).map(i => i.url);
+
   const isDark  = style === 'bold';
   const blockBg = isDark ? 'rgba(0,0,0,.2)' : '#F7F2EA';
   const bdrL    = '#C8A96E';
@@ -2227,8 +2201,10 @@ function buildAccomBlockHTML(accomId, accomName, mealPlan, accomImgUrls, style) 
   const hiC     = isDark ? 'rgba(232,213,168,.7)' : '#3D5C3D';
   const dotC    = '#C8A96E';
   const divC    = isDark ? 'rgba(200,169,110,.15)' : 'rgba(200,169,110,.22)';
+
   const lvlColors = { luxury:'#B8860B', midrange:'#4A5E4A', budget:'#8C8070' };
   const lvlC = lvlColors[level] || metaC;
+
   return `
     <div style="margin-top:18px;padding:14px 18px 12px;background:${blockBg};border-left:3px solid ${bdrL};border-radius:0 4px 4px 0;">
       <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-bottom:8px;">
@@ -2248,23 +2224,28 @@ function buildAccomBlockHTML(accomId, accomName, mealPlan, accomImgUrls, style) 
     </div>`;
 }
 
+/* ── Day-by-day section ── */
 function pdfDaysHTML(it, style) {
   const days = safeJSON(it.days, []);
   if (!days.length) return '<p style="color:#aaa;font-style:italic;font-size:11px;padding:16px 0;">No itinerary days added.</p>';
+
   const isDark = style === 'bold';
   const divCol = isDark ? 'rgba(200,169,110,.1)' : 'rgba(200,169,110,.18)';
+
   return days.map((d, di) => {
     const acts       = (d.activities || []).join(' · ');
     const galPhotos  = resolveGalPhotos(d.gallery_photos || []);
     const accomImgs  = d.accommodation_images || [];
     const destMosaic = buildDestMosaicHTML(galPhotos);
     const accomBlock = buildAccomBlockHTML(d.accommodation_id, d.accommodation_name, d.meal_plan, accomImgs, style);
+
     const badgeBg  = isDark ? '#C8A96E' : '#2E3B2E';
     const badgeC   = isDark ? '#2E3B2E' : '#C8A96E';
     const titleC   = isDark ? '#E8D5A8' : '#2E3B2E';
     const locC     = '#C8A96E';
     const txtC     = isDark ? 'rgba(232,213,168,.78)' : '#5C3E22';
     const metaC    = isDark ? 'rgba(200,169,110,.6)' : '#9C7A50';
+
     return `
     <div style="margin-bottom:${di < days.length-1 ? '28px' : '0'};padding-bottom:${di < days.length-1 ? '28px' : '0'};border-bottom:${di < days.length-1 ? `1px solid ${divCol}` : 'none'};">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
@@ -2285,10 +2266,13 @@ function pdfDaysHTML(it, style) {
   }).join('');
 }
 
+/* ════ WELCOME PAGE — standalone, full page, no overview ════ */
 function pdfWelcomePage(it, style) {
   const wl = safeJSON(it.welcome_letter, {});
+  /* Only render if there is actual welcome letter content */
   const hasContent = wl.body || wl.greeting || wl.signature;
   if (!hasContent && !it.hero_image && !it.title) return '';
+
   const isDark  = style === 'bold';
   const pageBg  = isDark ? '#2E3B2E' : '#FAF7F0';
   const gold    = '#C8A96E';
@@ -2296,9 +2280,12 @@ function pdfWelcomePage(it, style) {
   const bodyC   = isDark ? 'rgba(232,213,168,.82)' : '#5C3E22';
   const subC    = isDark ? 'rgba(200,169,110,.55)'  : 'rgba(100,70,40,.55)';
   const divC    = isDark ? 'rgba(200,169,110,.2)'   : 'rgba(200,169,110,.3)';
+
+  /* This page contains ONLY the welcome letter — never the overview text */
   return `
   <div class="pdf-page" style="background:${pageBg};min-height:880px;display:flex;flex-direction:column;">
     <div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:${gold};z-index:2;"></div>
+
     ${it.hero_image ? `
     <div style="position:relative;height:300px;overflow:hidden;flex-shrink:0;">
       <img src="${esc(it.hero_image)}" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.72);" onerror="this.style.display='none'"/>
@@ -2328,6 +2315,7 @@ function pdfWelcomePage(it, style) {
       ${it.title ? `<div style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:${titleC};text-transform:uppercase;letter-spacing:1px;">${esc(it.title)}</div>` : ''}
       ${it.client_name ? `<div style="font-size:11px;color:${subC};margin-top:6px;">Prepared for ${esc(it.client_name)}</div>` : ''}
     </div>`}
+
     <div style="padding:30px 48px 40px;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
       <div>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
@@ -2349,6 +2337,7 @@ function pdfWelcomePage(it, style) {
   </div>`;
 }
 
+/* ── Footer strip ── */
 function pdfFooter(it, style) {
   const isDark = style === 'bold';
   const bg  = isDark ? 'rgba(0,0,0,.3)' : '#2E3B2E';
@@ -2359,6 +2348,7 @@ function pdfFooter(it, style) {
   </div>`;
 }
 
+/* ── Section divider ── */
 function pdfSectionHdr(label, style) {
   const isDark = style === 'bold';
   const gold = '#C8A96E';
@@ -2370,6 +2360,7 @@ function pdfSectionHdr(label, style) {
   </div>`;
 }
 
+/* ── Inclusions / Exclusions ── */
 function pdfInclExcl(incl, excl, style) {
   if (!incl.length && !excl.length) return '';
   const isDark  = style === 'bold';
@@ -2379,6 +2370,7 @@ function pdfInclExcl(incl, excl, style) {
   const exclDot = isDark ? '#e07676' : '#c0392b';
   const bgC     = isDark ? 'rgba(0,0,0,.15)' : 'rgba(200,169,110,.05)';
   const bdrC    = isDark ? 'rgba(200,169,110,.12)' : 'rgba(200,169,110,.18)';
+
   return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:18px;background:${bgC};border:1px solid ${bdrC};border-radius:4px;margin-bottom:24px;">
     ${incl.length ? `<div>
       <div style="font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${inclDot};border-bottom:1.5px solid ${inclDot}44;padding-bottom:6px;margin-bottom:12px;">✓ Included</div>
@@ -2391,6 +2383,7 @@ function pdfInclExcl(incl, excl, style) {
   </div>`;
 }
 
+/* ── Pricing block ── */
 function pdfPricing(it, style) {
   if (!it.total_price) return '';
   const isDark = style === 'bold';
@@ -2406,6 +2399,7 @@ function pdfPricing(it, style) {
   </div>`;
 }
 
+/* ── Highlights list ── */
 function pdfHighlights(hi, style) {
   if (!hi.length) return '';
   const isDark = style === 'bold';
@@ -2418,7 +2412,10 @@ function pdfHighlights(hi, style) {
   </div>`;
 }
 
-/* ════ PDF STYLES ════ */
+/* ══════════════════════════════════════════
+   STYLE: CLASSIC
+   Page order: 1) Welcome (alone)  2) Main overview  3) Days  4) Inclusions+Pricing
+══════════════════════════════════════════ */
 function pdfStyleClassic(it) {
   const { price, incl, excl, hi } = pdfMeta(it);
   const style = 'classic';
@@ -2426,8 +2423,13 @@ function pdfStyleClassic(it) {
   const dkGrn = '#2E3B2E';
   const linen = '#FAF7F0';
   const txtC  = '#5C3E22';
+
   return pdfHead(it.title, '#FAF7F0') +
+
+  /* PAGE 1 — Welcome letter (standalone, no overview content) */
   pdfWelcomePage(it, style) +
+
+  /* PAGE 2 — Main itinerary overview */
   `<div class="pdf-page" style="background:${linen};display:flex;flex-direction:column;min-height:880px;">
     <div style="background:${dkGrn};padding:38px 44px 30px;position:relative;overflow:hidden;flex-shrink:0;">
       <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
@@ -2449,6 +2451,8 @@ function pdfStyleClassic(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 3 — Day-by-day */
   `<div class="pdf-page" style="background:${linen};display:flex;flex-direction:column;min-height:880px;">
     <div style="padding:32px 44px 24px;flex:1;">
       ${pdfSectionHdr('Day-by-Day Programme', style)}
@@ -2456,6 +2460,8 @@ function pdfStyleClassic(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 4 — Inclusions + Pricing */
   `<div class="pdf-page" style="background:${linen};display:flex;flex-direction:column;min-height:400px;">
     <div style="padding:32px 44px 28px;flex:1;">
       ${pdfSectionHdr("What's Included", style)}
@@ -2467,6 +2473,10 @@ function pdfStyleClassic(it) {
   `</div></body></html>`;
 }
 
+/* ══════════════════════════════════════════
+   STYLE: MINIMAL
+   Page order: 1) Welcome (alone)  2) Main overview  3) Days  4) Inclusions+Pricing
+══════════════════════════════════════════ */
 function pdfStyleMinimal(it) {
   const { price, incl, excl, hi } = pdfMeta(it);
   const style = 'minimal';
@@ -2474,10 +2484,16 @@ function pdfStyleMinimal(it) {
   const dark  = '#2E3B2E';
   const txtC  = '#5C3E22';
   const subC  = '#9C7A50';
+
   const bar = `<div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:${gold};"></div>`;
   const pad = 'padding:36px 44px 28px 54px;';
+
   return pdfHead(it.title, '#FFFFFF') +
+
+  /* PAGE 1 — Welcome letter (standalone) */
   pdfWelcomePage(it, style) +
+
+  /* PAGE 2 — Main itinerary overview */
   `<div class="pdf-page" style="background:#fff;display:flex;flex-direction:column;min-height:880px;position:relative;">
     ${bar}
     <div style="${pad}flex-shrink:0;border-bottom:1px solid rgba(200,169,110,.2);">
@@ -2498,6 +2514,8 @@ function pdfStyleMinimal(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 3 — Day-by-day */
   `<div class="pdf-page" style="background:#fff;display:flex;flex-direction:column;min-height:880px;position:relative;">
     ${bar}
     <div style="${pad}flex:1;">
@@ -2506,6 +2524,8 @@ function pdfStyleMinimal(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 4 — Inclusions + Pricing */
   `<div class="pdf-page" style="background:#fff;display:flex;flex-direction:column;min-height:400px;position:relative;">
     ${bar}
     <div style="${pad}flex:1;">
@@ -2518,6 +2538,10 @@ function pdfStyleMinimal(it) {
   `</div></body></html>`;
 }
 
+/* ══════════════════════════════════════════
+   STYLE: BOLD
+   Page order: 1) Welcome (alone)  2) Main overview  3) Days  4) Inclusions+Pricing
+══════════════════════════════════════════ */
 function pdfStyleBold(it) {
   const { price, incl, excl, hi } = pdfMeta(it);
   const style  = 'bold';
@@ -2526,9 +2550,14 @@ function pdfStyleBold(it) {
   const white  = '#E8D5A8';
   const sub    = 'rgba(232,213,168,.55)';
   const divC   = 'rgba(200,169,110,.15)';
+
   return pdfHead(it.title, '#2E3B2E') +
   `<style>body,html{background:#1a2a1a!important;}</style>` +
+
+  /* PAGE 1 — Welcome letter (standalone) */
   pdfWelcomePage(it, style) +
+
+  /* PAGE 2 — Main itinerary overview */
   `<div class="pdf-page" style="background:${bodyBg};display:flex;flex-direction:column;min-height:880px;">
     <div style="padding:34px 42px 26px;flex-shrink:0;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
@@ -2556,6 +2585,8 @@ function pdfStyleBold(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 3 — Day-by-day */
   `<div class="pdf-page" style="background:${bodyBg};display:flex;flex-direction:column;min-height:880px;">
     <div style="padding:30px 42px 20px;flex:1;">
       <div style="font-family:'Oswald',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${gold};margin-bottom:22px;border-bottom:1px solid ${divC};padding-bottom:8px;">Day-by-Day Programme</div>
@@ -2563,6 +2594,8 @@ function pdfStyleBold(it) {
     </div>
     ${pdfFooter(it, style)}
   </div>` +
+
+  /* PAGE 4 — Inclusions + Pricing */
   `<div class="pdf-page" style="background:${bodyBg};display:flex;flex-direction:column;min-height:400px;">
     <div style="padding:30px 42px 28px;flex:1;">
       <div style="font-family:'Oswald',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${gold};margin-bottom:22px;border-bottom:1px solid ${divC};padding-bottom:8px;">What's Included</div>
@@ -2573,6 +2606,7 @@ function pdfStyleBold(it) {
   </div>` +
   `</div></body></html>`;
 }
+
 </script>
 </body>
 </html>
