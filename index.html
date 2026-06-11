@@ -559,7 +559,7 @@ async function doLogin() {
   try {
     const { error } = await window._sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    window.location.href = 'admin.html';
+    window.location.href = 'dashboard.html';
   } catch(e) {
     showError(e.message || 'Sign in failed. Please check your credentials.');
     btn.disabled = false;
