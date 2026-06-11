@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Safari ASAP — Admin Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sage:       #4A5E4A;
+    --sage-light: #6B7F6B;
+    --sage-dark:  #2E3B2E;
+    --sand:       #C8A96E;
+    --sand-light: #E8D5A8;
+    --sand-pale:  #F5EDD6;
+    --earth:      #6B4226;
+    --earth-dark: #3D2011;
+    --linen:      #FAF7F0;
+    --warm-gray:  #8C8070;
+    --border:     rgba(100,80,60,.15);
+    --ff-head:    'Oswald', sans-serif;
+    --ff-body:    'Montserrat', sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: var(--ff-body);
+    background: var(--earth-dark);
+    overflow: hidden;
+  }
+
+  /* ── FULL SCREEN LAYOUT ── */
+  .screen {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    min-height: 100vh;
+  }
+
+  /* ── LEFT PANEL — VISUAL ── */
+  .visual-panel {
+    position: relative;
+    overflow: hidden;
+    background: var(--sage-dark);
+  }
+  .visual-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1400&q=80');
+    background-size: cover;
+    background-position: center;
+    filter: saturate(.7) brightness(.55);
+  }
+  .visual-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(46,59,46,.7) 0%, rgba(61,32,17,.5) 100%);
+  }
+  .visual-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 3rem;
+  }
+  .visual-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-mark {
+    width: 48px;
+    height: 48px;
+    background: var(--sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--ff-head);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--earth-dark);
+    letter-spacing: 1px;
+  }
+  .brand-name {
+    font-family: var(--ff-head);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1;
+  }
+  .brand-name span { color: var(--sand); }
+  .brand-sub {
+    font-size: .68rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.5);
+    margin-top: 3px;
+  }
+  .visual-headline {
+    color: #fff;
+  }
+  .visual-headline .eyebrow {
+    font-family: var(--ff-head);
+    font-size: .75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--sand);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+  }
+  .visual-headline .eyebrow::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--sand);
+    opacity: .5;
+  }
+  .visual-headline h1 {
+    font-family: var(--ff-head);
+    font-size: 3.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .visual-headline h1 em {
+    font-style: normal;
+    color: var(--sand);
+  }
+  .visual-headline p {
+    font-size: .88rem;
+    color: rgba(255,255,255,.65);
+    line-height: 1.7;
+    max-width: 380px;
+    font-weight: 300;
+  }
+  .visual-stats {
+    display: flex;
+    gap: 2rem;
+  }
+  .vstat {
+    border-left: 2px solid var(--sand);
+    padding-left: .8rem;
+  }
+  .vstat-num {
+    font-family: var(--ff-head);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--sand-light);
+    line-height: 1;
+  }
+  .vstat-lbl {
+    font-size: .65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.4);
+    margin-top: 3px;
+  }
+
+  /* ── RIGHT PANEL — FORM ── */
+  .form-panel {
+    background: var(--linen);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2.8rem;
+    overflow-y: auto;
+  }
+  .form-header {
+    margin-bottom: 2.4rem;
+  }
+  .form-header h2 {
+    font-family: var(--ff-head);
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--earth-dark);
+    margin-bottom: .4rem;
+  }
+  .form-header p {
+    font-size: .82rem;
+    color: var(--warm-gray);
+    font-weight: 400;
+  }
+  .form-header p a {
+    color: var(--earth);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* ── FIELD ── */
+  .field {
+    margin-bottom: 1.2rem;
+  }
+  .field label {
+    display: block;
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--sage-dark);
+    margin-bottom: .5rem;
+  }
+  .field-wrap {
+    position: relative;
+  }
+  .field-wrap i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--warm-gray);
+    font-size: .85rem;
+    pointer-events: none;
+    transition: color .2s;
+  }
+  .field-wrap input {
+    width: 100%;
+    padding: .85rem 1rem .85rem 2.6rem;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    font-family: var(--ff-body);
+    font-size: .88rem;
+    color: var(--earth-dark);
+    font-weight: 400;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    border-radius: 0;
+    -webkit-appearance: none;
+  }
+  .field-wrap input::placeholder {
+    color: rgba(100,80,60,.35);
+  }
+  .field-wrap input:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(74,94,74,.12);
+  }
+  .field-wrap input:focus + i,
+  .field-wrap:focus-within i {
+    color: var(--sage);
+  }
+  /* icon is before input in DOM but positioned absolutely — fix order */
+  .field-wrap .pw-toggle {
+    left: auto;
+    right: 1rem;
+    cursor: pointer;
+    pointer-events: all;
+  }
+  .field-wrap .pw-toggle:hover { color: var(--sage); }
+
+  /* ── SUBMIT ── */
+  .btn-login {
+    width: 100%;
+    padding: 1rem;
+    background: var(--sage-dark);
+    color: var(--sand-light);
+    font-family: var(--ff-head);
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 1.8rem;
+    border-radius: 0;
+  }
+  .btn-login:hover { background: var(--sage); transform: translateY(-1px); }
+  .btn-login:active { transform: translateY(0); }
+  .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin: 1.6rem 0;
+    font-size: .68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── MAGIC LINK ── */
+  .btn-magic {
+    width: 100%;
+    padding: .85rem 1rem;
+    background: transparent;
+    color: var(--sage-dark);
+    font-family: var(--ff-head);
+    font-size: .85rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1.5px solid var(--sage-dark);
+    cursor: pointer;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-magic:hover {
+    background: var(--sage-dark);
+    color: var(--sand-light);
+  }
+
+  /* ── ERROR / SUCCESS ── */
+  .alert {
+    padding: .8rem 1rem;
+    font-size: .8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid;
+  }
+  .alert-error {
+    background: #fdf0f0;
+    color: #7a2323;
+    border-color: #c0392b;
+  }
+  .alert-success {
+    background: #f0fdf4;
+    color: #1a5e2a;
+    border-color: #27ae60;
+  }
+  .alert { display: none; }
+  .alert.show { display: flex; }
+
+  /* ── FOOTER TEXT ── */
+  .form-footer {
+    margin-top: 2rem;
+    font-size: .72rem;
+    color: var(--warm-gray);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .form-footer a {
+    color: var(--sage);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* ── LOADING SPINNER ── */
+  .spin-sm {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(200,169,110,.3);
+    border-top-color: var(--sand-light);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .screen { grid-template-columns: 1fr; }
+    .visual-panel { display: none; }
+    .form-panel { min-height: 100vh; padding: 2rem 1.5rem; }
+  }
+  </style>
+</head>
+<body>
+
+<div class="screen">
+
+  <!-- LEFT: VISUAL PANEL -->
+  <div class="visual-panel">
+    <div class="visual-bg"></div>
+    <div class="visual-overlay"></div>
+    <div class="visual-content">
+      <div class="visual-brand">
+        <div class="brand-mark">SA</div>
+        <div>
+          <div class="brand-name">Safari <span>ASAP</span></div>
+          <div class="brand-sub">Itinerary Manager</div>
+        </div>
+      </div>
+
+      <div class="visual-headline">
+        <div class="eyebrow">Admin Portal</div>
+        <h1>Build <em>journeys</em> worth remembering</h1>
+        <p>Create stunning safari itineraries, manage destinations and accommodations, and export polished proposals in seconds.</p>
+      </div>
+
+      <div class="visual-stats">
+        <div class="vstat">
+          <div class="vstat-num">PDF</div>
+          <div class="vstat-lbl">Export styles</div>
+        </div>
+        <div class="vstat">
+          <div class="vstat-num">4</div>
+          <div class="vstat-lbl">Content sections</div>
+        </div>
+        <div class="vstat">
+          <div class="vstat-num">∞</div>
+          <div class="vstat-lbl">Itineraries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM PANEL -->
+  <div class="form-panel">
+    <div class="form-header">
+      <h2>Sign In</h2>
+      <p>Safari ASAP Admin — <a href="#">safariasp.com</a></p>
+    </div>
+
+    <div class="alert alert-error" id="alertError">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span id="alertErrorText">Invalid email or password.</span>
+    </div>
+    <div class="alert alert-success" id="alertSuccess">
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="alertSuccessText">Check your email for a magic link.</span>
+    </div>
+
+    <!-- PASSWORD LOGIN -->
+    <div id="panelPassword">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="field-wrap">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="you@safariasp.com" autocomplete="email"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="field-wrap" style="position:relative">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"
+            style="padding-right:2.8rem"
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+          <i class="fa-solid fa-eye pw-toggle" id="pwEyeToggle" onclick="togglePw()"></i>
+        </div>
+      </div>
+      <button class="btn-login" id="btnLogin" onclick="doLogin()">
+        <span id="btnLoginText">Sign In</span>
+        <i class="fa-solid fa-arrow-right" id="btnLoginArrow"></i>
+      </button>
+
+      <div class="divider">or</div>
+
+      <button class="btn-magic" onclick="showMagicPanel()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        Sign in with Magic Link
+      </button>
+    </div>
+
+    <!-- MAGIC LINK -->
+    <div id="panelMagic" style="display:none">
+      <div class="field">
+        <label>Email Address</label>
+        <div class="field-wrap">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="magicEmail" placeholder="you@safariasp.com" autocomplete="email"/>
+        </div>
+      </div>
+      <button class="btn-login" id="btnMagic" onclick="doMagicLink()">
+        <span id="btnMagicText">Send Magic Link</span>
+        <i class="fa-solid fa-paper-plane" id="btnMagicIcon"></i>
+      </button>
+
+      <div class="divider">or</div>
+
+      <button class="btn-magic" onclick="showPasswordPanel()">
+        <i class="fa-solid fa-lock"></i>
+        Sign in with Password
+      </button>
+    </div>
+
+    <div class="form-footer">
+      Problems signing in? Contact your<br/>
+      <a href="mailto:admin@safariasp.com">administrator</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+(async () => {
+  const { data } = await window._sb.auth.getSession();
+  if (data.session) window.location.href = 'admin.html';
+})();
+
+function showPasswordPanel() {
+  document.getElementById('panelPassword').style.display = '';
+  document.getElementById('panelMagic').style.display = 'none';
+  hideAlerts();
+}
+function showMagicPanel() {
+  document.getElementById('panelPassword').style.display = 'none';
+  document.getElementById('panelMagic').style.display = '';
+  hideAlerts();
+}
+function hideAlerts() {
+  document.getElementById('alertError').classList.remove('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+function showError(msg) {
+  document.getElementById('alertErrorText').textContent = msg;
+  document.getElementById('alertError').classList.add('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+function showSuccess(msg) {
+  document.getElementById('alertSuccessText').textContent = msg;
+  document.getElementById('alertSuccess').classList.add('show');
+  document.getElementById('alertError').classList.remove('show');
+}
+
+function togglePw() {
+  const inp = document.getElementById('loginPassword');
+  const ico = document.getElementById('pwEyeToggle');
+  if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fa-solid fa-eye-slash pw-toggle'; }
+  else { inp.type = 'password'; ico.className = 'fa-solid fa-eye pw-toggle'; }
+}
+
+async function doLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showError('Please enter your email and password.'); return; }
+  const btn  = document.getElementById('btnLogin');
+  const text = document.getElementById('btnLoginText');
+  const arr  = document.getElementById('btnLoginArrow');
+  btn.disabled = true;
+  text.textContent = 'Signing in…';
+  arr.outerHTML = '<span class="spin-sm" id="btnLoginArrow"></span>';
+  hideAlerts();
+  try {
+    const { error } = await window._sb.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    window.location.href = 'admin.html';
+  } catch(e) {
+    showError(e.message || 'Sign in failed. Please check your credentials.');
+    btn.disabled = false;
+    text.textContent = 'Sign In';
+    document.querySelector('.spin-sm')?.remove();
+    btn.insertAdjacentHTML('beforeend', '<i class="fa-solid fa-arrow-right" id="btnLoginArrow"></i>');
+  }
+}
+
+async function doMagicLink() {
+  const email = document.getElementById('magicEmail').value.trim();
+  if (!email) { showError('Please enter your email address.'); return; }
+  const btn  = document.getElementById('btnMagic');
+  const text = document.getElementById('btnMagicText');
+  btn.disabled = true;
+  text.textContent = 'Sending…';
+  hideAlerts();
+  try {
+    const { error } = await window._sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/admin.html' } });
+    if (error) throw error;
+    showSuccess('Magic link sent to ' + email + '. Check your inbox.');
+  } catch(e) {
+    showError(e.message || 'Could not send magic link.');
+  } finally {
+    btn.disabled = false;
+    text.textContent = 'Send Magic Link';
+  }
+}
+</script>
+</body>
+</html>
