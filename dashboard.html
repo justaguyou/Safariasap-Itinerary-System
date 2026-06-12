@@ -2288,12 +2288,45 @@
                 <i class="fa-solid fa-envelope-open-text"></i>
                 <div>
                   This welcome letter appears as the
-                  <strong>first page</strong> of the PDF — a warm, personal
-                  message to your client before they read the itinerary. The
-                  itinerary's <strong>hero image</strong> is shown prominently
-                  at the top of the welcome page. The welcome page stands alone
-                  and does not include any overview or itinerary content.
+                  <strong>first page</strong> of the PDF. Upload a
+                  <strong>Welcome Hero Image</strong> below to use a different
+                  photo on the welcome page, or leave it blank to reuse the
+                  itinerary hero image.
                 </div>
+              </div>
+              <div class="form-section">
+                <div class="form-section-title">Welcome Page Hero Image</div>
+                <div
+                  class="img-zone"
+                  id="wlHeroZone"
+                  ondragover="ev_dragover(event, 'wlHero')"
+                  ondragleave="ev_dragleave(event, 'wlHero')"
+                  ondrop="ev_drop(event, 'wlHero')"
+                >
+                  <div class="img-trigger" id="wlHeroTrigger">
+                    <input
+                      type="file"
+                      id="wlHeroFile"
+                      accept="image/*"
+                      onchange="handleWlImg(event)"
+                    />
+                    <i class="fa-solid fa-image"></i>
+                    <p>Tap or drop welcome page hero image</p>
+                    <small>Leave blank to reuse the itinerary hero &middot; JPG PNG WEBP &middot; max 10 MB</small>
+                  </div>
+                  <div class="img-preview-panel" id="wlHeroPreview">
+                    <img id="wlHeroPreviewImg" src="" alt="" />
+                    <div class="img-preview-overlay">
+                      <span class="img-preview-name" id="wlHeroPreviewName"></span>
+                      <button type="button" class="btn btn-xs btn-sage" onclick="clearUploadZone('wlHero', 'wl_hero_image')">Remove</button>
+                    </div>
+                  </div>
+                  <div class="img-url-row">
+                    <span class="url-label">Saved URL</span>
+                    <input type="text" id="wl_hero_image" placeholder="Uploads automatically" readonly />
+                  </div>
+                </div>
+                <div id="wlHeroUploadStatus" class="upload-status-bar" style="display:none"></div>
               </div>
               <div class="form-section">
                 <div class="form-section-title">Welcome Letter</div>
@@ -3561,8 +3594,9 @@
         document
           .querySelector('.pdf-card[data-style="classic"]')
           ?.classList.add("selected");
-        // Clear hero image zone
+        // Clear hero image zones
         clearItinImgEl();
+        clearUploadZone("wlHero", "wl_hero_image");
       }
 
       function populateItinForm(it) {
@@ -3600,6 +3634,12 @@
         // Hero image
         if (it.hero_image) {
           setItinHeroPreview(it.hero_image, "Existing");
+        }
+        // Welcome letter hero image
+        if (wl.hero_image) {
+          setZonePreview("wlHero", wl.hero_image, "Welcome image");
+          const wlField = document.getElementById("wl_hero_image");
+          if (wlField) wlField.value = wl.hero_image;
         }
         // Dynamic lists
         safeJSON(it.highlights, []).forEach((v) =>
@@ -3689,6 +3729,7 @@
             closing: gv("wl_closing"),
             signature: gv("wl_signature"),
             date_line: gv("wl_date_line"),
+            hero_image: gv("wl_hero_image"),
           },
         };
       }
@@ -4102,6 +4143,11 @@
             pathPfx: "itineraries/",
             fieldId: "it_hero_image",
           },
+          wlHero: {
+            bucket: IMG_BUCKET,
+            pathPfx: "welcome/",
+            fieldId: "wl_hero_image",
+          },
           destHero: {
             bucket: DEST_BUCKET,
             pathPfx: "destinations/",
@@ -4130,6 +4176,12 @@
       }
       function clearItinImgEl() {
         clearUploadZone("itinHero", "it_hero_image");
+      }
+      async function handleWlImg(e) {
+        const file = e.target.files[0];
+        e.target.value = "";
+        if (file)
+          await uploadToZone(file, "wlHero", IMG_BUCKET, "welcome/", "wl_hero_image");
       }
 
       /* ════ SAVE ITINERARY ════ */
@@ -5035,7 +5087,8 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
       function pdfWelcomePage(it, style) {
         const wl = safeJSON(it.welcome_letter, {});
         const hasContent = wl.body || wl.greeting || wl.signature;
-        if (!hasContent && !it.hero_image && !it.title) return "";
+        const welcomeHero = wl.hero_image || it.hero_image || "";
+        if (!hasContent && !welcomeHero && !it.title) return "";
         const isDark = style === "bold";
         const pageBg = isDark ? "#2E3B2E" : "#FAF7F0";
         const gold = "#C8A96E";
@@ -5047,17 +5100,13 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
   <div class="pdf-page" style="background:${pageBg};min-height:880px;display:flex;flex-direction:column;">
     <div style="position:absolute;left:0;top:0;bottom:0;width:5px;background:${gold};z-index:2;"></div>
     ${
-      it.hero_image
+      welcomeHero
         ? `
     <div style="position:relative;height:300px;overflow:hidden;flex-shrink:0;">
-      <img src="${esc(it.hero_image)}" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.72);" onerror="this.style.display='none'"/>
+      <img src="${esc(welcomeHero)}" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.72);" onerror="this.style.display='none'"/>
       <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,${isDark ? "rgba(46,59,46,.7)" : "rgba(250,247,240,.6)"} 100%);"></div>
-      <div style="position:absolute;top:28px;left:48px;display:flex;align-items:center;gap:10px;z-index:2;">
-        <div style="width:36px;height:36px;background:${gold};display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;color:#2E3B2E;">SA</div>
-        <div>
-          <div style="font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#fff;">SAFARI <span style="color:${gold};">ASAP</span></div>
-          <div style="font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);">Itinerary Proposal</div>
-        </div>
+      <div style="position:absolute;top:20px;left:40px;z-index:2;">
+        <img src="logo.jpeg" alt="Safari ASAP" style="height:52px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));" onerror="this.style.display='none'"/>
       </div>
       ${
         it.title
@@ -5071,13 +5120,9 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
       }
     </div>`
         : `
-    <div style="padding:40px 48px 28px;border-bottom:1px solid ${divC};flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-        <div style="width:36px;height:36px;background:${gold};display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;color:#2E3B2E;">SA</div>
-        <div>
-          <div style="font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${titleC};">SAFARI <span style="color:${gold};">ASAP</span></div>
-          <div style="font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:${subC};">Itinerary Proposal</div>
-        </div>
+    <div style="padding:28px 48px 28px;border-bottom:1px solid ${divC};flex-shrink:0;">
+      <div style="margin-bottom:20px;">
+        <img src="logo.jpeg" alt="Safari ASAP" style="height:52px;width:auto;display:block;" onerror="this.style.display='none'"/>
       </div>
       ${it.title ? `<div style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:${titleC};text-transform:uppercase;letter-spacing:1px;">${esc(it.title)}</div>` : ""}
       ${it.client_name ? `<div style="font-size:11px;color:${subC};margin-top:6px;">Prepared for ${esc(it.client_name)}</div>` : ""}
@@ -5108,9 +5153,9 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
         const isDark = style === "bold";
         const bg = isDark ? "rgba(0,0,0,.3)" : "#2E3B2E";
         const col = "rgba(200,169,110,.55)";
-        return `<div style="background:${bg};padding:9px 44px;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:${col};">Safari ASAP${it.reference_code ? " · " + esc(it.reference_code) : ""}</span>
-    <span style="font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:${col};">Confidential Proposal</span>
+        return `<div style="background:${bg};padding:8px 44px;display:flex;align-items:center;justify-content:space-between;">
+    <img src="logo.jpeg" alt="Safari ASAP" style="height:24px;width:auto;display:block;opacity:.75;filter:brightness(1.6);" onerror="this.style.display='none'"/>
+    <span style="font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:${col};">${it.reference_code ? esc(it.reference_code) + " · " : ""}Confidential Proposal</span>
   </div>`;
       }
 
@@ -5311,12 +5356,8 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
           pdfWelcomePage(it, style) +
           `<div class="pdf-page" style="background:${bodyBg};display:flex;flex-direction:column;min-height:880px;">
     <div style="padding:34px 42px 26px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
-        <div style="width:36px;height:36px;background:${gold};display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:.9rem;font-weight:700;color:#2E3B2E;flex-shrink:0;">SA</div>
-        <div>
-          <div style="font-family:'Oswald',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${white};">SAFARI <span style="color:${gold};">ASAP</span></div>
-          <div style="font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:${sub};">Itinerary Proposal</div>
-        </div>
+      <div style="margin-bottom:22px;">
+        <img src="logo.jpeg" alt="Safari ASAP" style="height:52px;width:auto;display:block;filter:brightness(1.15) drop-shadow(0 2px 6px rgba(0,0,0,.45));" onerror="this.style.display='none'"/>
       </div>
       <div style="padding:20px 24px;background:rgba(200,169,110,.09);border:1px solid ${divC};border-left:4px solid ${gold};border-radius:0 4px 4px 0;">
         <div style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:${white};letter-spacing:1px;text-transform:uppercase;line-height:1.2;margin-bottom:8px;">${esc(it.title)}</div>
