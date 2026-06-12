@@ -1,0 +1,6 @@
+# Git ignore — Safari ASAP
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+node_modules/

@@ -18,7 +18,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
   <title>Safari ASAP — Admin Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -601,7 +602,7 @@ async function doMagicLink() {
   text.textContent = 'Sending…';
   hideAlerts();
   try {
-    const { error } = await window._sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/admin.html' } });
+    const { error } = await window._sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/dashboard.html' } });
     if (error) throw error;
     showSuccess('Magic link sent to ' + email + '. Check your inbox.');
   } catch(e) {

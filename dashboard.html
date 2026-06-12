@@ -79,7 +79,8 @@
       sizes="16x16"
       href="favicon/favicon-16x16.png"
     />
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+    <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
     <title>Safari ASAP — Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1577,9 +1578,9 @@
         color: var(--sage);
       }
       .gal-pill.active {
-        background: var(--sage-d);
-        color: var(--sand-l);
-        border-color: var(--sage-d);
+        background: var(--sand2);
+        color: var(--white);
+        border-color: var(--sand2);
       }
       .gal-grid {
         display: grid;
@@ -3153,7 +3154,7 @@
       (async () => {
         const { data } = await window._sb.auth.getSession();
         if (!data.session) {
-          window.location.href = "login.html";
+          window.location.href = "index.html";
           return;
         }
         document.getElementById("adminEmail").textContent =
@@ -4906,7 +4907,7 @@ body{font-family:'Montserrat',sans-serif;background:${outerBg};min-height:100vh;
   .no-print{display:none!important;}
 }
 .no-print{position:fixed;top:20px;right:24px;z-index:9999;display:flex;gap:10px;align-items:center;}
-.pdf-print-btn{background:#2E3B2E;color:#C8A96E;border:none;padding:10px 22px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .2s;}
+.pdf-print-btn{background:#F19233;color:#FFFFFF;border:none;padding:10px 22px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .2s;}
 .pdf-print-btn:hover{background:#1a2a1a;}
 .pdf-print-btn svg{width:15px;height:15px;fill:currentColor;}
 </style>

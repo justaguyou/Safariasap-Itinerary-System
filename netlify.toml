@@ -1,0 +1,70 @@
+# ══════════════════════════════════════════════
+#  Safari ASAP — Netlify Configuration
+# ══════════════════════════════════════════════
+
+[build]
+  publish = "."        # deploy the root folder as-is
+
+# ── Security & caching headers ──
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/supabase-config.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/favicon/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# ── Redirects ──
+# login.html alias (dashboard redirects to "login.html")
+[[redirects]]
+  from   = "/login.html"
+  to     = "/index.html"
+  status = 301
+
+# admin.html alias (magic-link email uses /admin.html)
+[[redirects]]
+  from   = "/admin.html"
+  to     = "/dashboard.html"
+  status = 301
+
+# Trailing slash cleanup
+[[redirects]]
+  from   = "/index.html/"
+  to     = "/index.html"
+  status = 301
+
+[[redirects]]
+  from   = "/dashboard.html/"
+  to     = "/dashboard.html"
+  status = 301
+
+# Catch-all: any unknown path → index (login) page
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 404

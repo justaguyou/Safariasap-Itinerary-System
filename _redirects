@@ -1,0 +1,9 @@
+# ─── Netlify _redirects (backup to netlify.toml) ───────────────────
+# login.html is an alias for index.html (the real login page)
+/login.html        /index.html       301
+
+# admin.html is an alias for dashboard.html
+/admin.html        /dashboard.html   301
+
+# Catch-all: send unknown URLs to the login page with a 404
+/*                 /index.html       404
