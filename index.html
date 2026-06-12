@@ -29,27 +29,26 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --sage:       #4A5E4A;
-    --sage-light: #6B7F6B;
-    --sage-dark:  #2E3B2E;
-    --sand:       #3C2414;
-    --sand2:       #F19233;
-    --sand-light: #E8D5A8;
-    --sand-pale:  #F5EDD6;
-    --earth:      #6B4226;
-    --earth-dark: #3D2011;
-    --linen:      #FAF7F0;
-    --white:      #ffffff;
-    --warm-gray:  #8C8070;
-    --border:     rgba(100,80,60,.15);
-    --ff-head:    'Oswald', sans-serif;
-    --ff-body:    'Montserrat', sans-serif;
+    --brand-orange:   #F19233;
+    --brand-brown:    #3C2414;
+    --brand-brown-lt: #5a3820;
+    --sage:           #4A5E4A;
+    --sage-light:     #6B7F6B;
+    --sage-dark:      #2E3B2E;
+    --sand-light:     #E8D5A8;
+    --sand-pale:      #F5EDD6;
+    --linen:          #FAF7F0;
+    --white:          #ffffff;
+    --warm-gray:      #8C8070;
+    --border:         rgba(60,36,20,.15);
+    --ff-head:        'Oswald', sans-serif;
+    --ff-body:        'Montserrat', sans-serif;
   }
 
   html, body {
     height: 100%;
     font-family: var(--ff-body);
-    background: var(--earth-dark);
+    background: var(--brand-brown);
     overflow: hidden;
   }
 
@@ -77,7 +76,7 @@
   .visual-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(46,59,46,.7) 0%, rgba(61,32,17,.5) 100%);
+    background: linear-gradient(135deg, rgba(46,59,46,.7) 0%, rgba(60,36,20,.6) 100%);
   }
   .visual-content {
     position: relative;
@@ -94,49 +93,17 @@
     gap: 14px;
   }
   .visual-brand img {
-    
     width: auto;
     height: 100px;
   }
-  .brand-mark {
-    width: 48px;
-    height: 48px;
-    background: var(--sand);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--ff-head);
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--earth-dark);
-    letter-spacing: 1px;
-  }
-  .brand-name {
-    font-family: var(--ff-head);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #fff;
-    line-height: 1;
-  }
-  .brand-name span { color: var(--sand); }
-  .brand-sub {
-    font-size: .68rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,.5);
-    margin-top: 3px;
-  }
-  .visual-headline {
-    color: #fff;
-  }
+
+  .visual-headline { color: #fff; }
   .visual-headline .eyebrow {
     font-family: var(--ff-head);
     font-size: .75rem;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: var(--sand2);
+    color: var(--brand-orange);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -147,7 +114,7 @@
     flex: 1;
     max-width: 60px;
     height: 1px;
-    background: var(--sand);
+    background: var(--brand-orange);
     opacity: .5;
   }
   .visual-headline h1 {
@@ -162,7 +129,7 @@
   }
   .visual-headline h1 em {
     font-style: normal;
-    color: var(--sand2);
+    color: var(--brand-orange);
   }
   .visual-headline p {
     font-size: .88rem;
@@ -171,12 +138,9 @@
     max-width: 380px;
     font-weight: 300;
   }
-  .visual-stats {
-    display: flex;
-    gap: 2rem;
-  }
+  .visual-stats { display: flex; gap: 2rem; }
   .vstat {
-    border-left: 2px solid var(--white);
+    border-left: 2px solid var(--brand-orange);
     padding-left: .8rem;
   }
   .vstat-num {
@@ -190,7 +154,7 @@
     font-size: .65rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color:var(--white);
+    color: rgba(255,255,255,.6);
     margin-top: 3px;
   }
 
@@ -203,45 +167,31 @@
     padding: 3rem 2.8rem;
     overflow-y: auto;
   }
-  .form-header {
-    margin-bottom: 2.4rem;
-  }
+  .form-header { margin-bottom: 2.4rem; }
   .form-header h2 {
     font-family: var(--ff-head);
     font-size: 1.8rem;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--earth-dark);
+    color: var(--brand-brown);
     margin-bottom: .4rem;
   }
-  .form-header p {
-    font-size: .82rem;
-    color: var(--warm-gray);
-    font-weight: 400;
-  }
-  .form-header p a {
-    color: var(--earth);
-    font-weight: 600;
-    text-decoration: none;
-  }
+  .form-header p { font-size: .82rem; color: var(--warm-gray); font-weight: 400; }
+  .form-header p a { color: var(--brand-orange); font-weight: 600; text-decoration: none; }
 
   /* ── FIELD ── */
-  .field {
-    margin-bottom: 1.2rem;
-  }
+  .field { margin-bottom: 1.2rem; }
   .field label {
     display: block;
     font-size: .65rem;
     font-weight: 600;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: var(--sage-dark);
+    color: var(--brand-brown);
     margin-bottom: .5rem;
   }
-  .field-wrap {
-    position: relative;
-  }
+  .field-wrap { position: relative; }
   .field-wrap i {
     position: absolute;
     left: 1rem;
@@ -259,7 +209,7 @@
     border: 1.5px solid var(--border);
     font-family: var(--ff-body);
     font-size: .88rem;
-    color: var(--earth-dark);
+    color: var(--brand-brown);
     font-weight: 400;
     outline: none;
     transition: border-color .2s, box-shadow .2s;
@@ -267,31 +217,25 @@
     -webkit-appearance: none;
         appearance: none;
   }
-  .field-wrap input::placeholder {
-    color: rgba(100,80,60,.35);
-  }
+  .field-wrap input::placeholder { color: rgba(60,36,20,.35); }
   .field-wrap input:focus {
-    border-color: var(--sage);
-    box-shadow: 0 0 0 3px rgba(74,94,74,.12);
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 3px rgba(241,146,51,.15);
   }
-  .field-wrap input:focus + i,
-  .field-wrap:focus-within i {
-    color: var(--sage);
-  }
-  /* icon is before input in DOM but positioned absolutely — fix order */
+  .field-wrap:focus-within i { color: var(--brand-orange); }
   .field-wrap .pw-toggle {
     left: auto;
     right: 1rem;
     cursor: pointer;
     pointer-events: all;
   }
-  .field-wrap .pw-toggle:hover { color: var(--sage); }
+  .field-wrap .pw-toggle:hover { color: var(--brand-orange); }
 
   /* ── SUBMIT ── */
   .btn-login {
     width: 100%;
     padding: 1rem;
-    background: var(--sand);
+    background: var(--brand-brown);
     color: var(--white);
     font-family: var(--ff-head);
     font-size: .95rem;
@@ -308,7 +252,7 @@
     margin-top: 1.8rem;
     border-radius: 0;
   }
-  .btn-login:hover { background: var(--sand2); transform: translateY(-1px); }
+  .btn-login:hover { background: var(--brand-orange); transform: translateY(-1px); }
   .btn-login:active { transform: translateY(0); }
   .btn-login:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
@@ -335,13 +279,13 @@
     width: 100%;
     padding: .85rem 1rem;
     background: transparent;
-    color: var(--sage-dark);
+    color: var(--brand-brown);
     font-family: var(--ff-head);
     font-size: .85rem;
     font-weight: 500;
     letter-spacing: 2px;
     text-transform: uppercase;
-    border: 1.5px solid var(--sage-dark);
+    border: 1.5px solid var(--brand-brown);
     cursor: pointer;
     transition: all .2s;
     display: flex;
@@ -349,33 +293,21 @@
     justify-content: center;
     gap: 8px;
   }
-  .btn-magic:hover {
-    background: var(--sage-dark);
-    color: var(--sand-light);
-  }
+  .btn-magic:hover { background: var(--brand-brown); color: var(--sand-light); }
 
   /* ── ERROR / SUCCESS ── */
   .alert {
     padding: .8rem 1rem;
     font-size: .8rem;
     font-weight: 500;
-    display: flex;
+    display: none;
     align-items: center;
     gap: .6rem;
     margin-bottom: 1rem;
     border-left: 3px solid;
   }
-  .alert-error {
-    background: #fdf0f0;
-    color: #7a2323;
-    border-color: #c0392b;
-  }
-  .alert-success {
-    background: #f0fdf4;
-    color: #1a5e2a;
-    border-color: #27ae60;
-  }
-  .alert { display: none; }
+  .alert-error { background: #fdf0f0; color: #7a2323; border-color: #c0392b; }
+  .alert-success { background: #f0fdf4; color: #1a5e2a; border-color: #27ae60; }
   .alert.show { display: flex; }
 
   /* ── FOOTER TEXT ── */
@@ -386,19 +318,15 @@
     text-align: center;
     line-height: 1.6;
   }
-  .form-footer a {
-    color: var(--sage);
-    font-weight: 600;
-    text-decoration: none;
-  }
+  .form-footer a { color: var(--brand-orange); font-weight: 600; text-decoration: none; }
 
   /* ── LOADING SPINNER ── */
   .spin-sm {
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(200,169,110,.3);
-    border-top-color: var(--sand-light);
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
     border-radius: 50%;
     animation: spin .7s linear infinite;
   }
@@ -422,10 +350,7 @@
     <div class="visual-overlay"></div>
     <div class="visual-content">
       <div class="visual-brand">
-        <img src="logo.jpeg" alt="">
-        <div>
-          
-        </div>
+        <img src="logo.jpeg" alt="Safari ASAP">
       </div>
 
       <div class="visual-headline">
@@ -490,13 +415,6 @@
         <span id="btnLoginText">Sign In</span>
         <i class="fa-solid fa-arrow-right" id="btnLoginArrow"></i>
       </button>
-
-      <!-- <div class="divider">or</div> -->
-
-      <!-- <button class="btn-magic" onclick="showMagicPanel()">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        Sign in with Magic Link
-      </button> -->
     </div>
 
     <!-- MAGIC LINK -->

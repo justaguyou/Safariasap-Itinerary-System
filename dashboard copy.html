@@ -1149,124 +1149,20 @@
     }
     function selectLang(code,el){selectedLang=code;document.querySelectorAll(".lang-item").forEach(i=>i.classList.remove("selected"));el.classList.add("selected");}
     async function proceedExport(){
-      document.getElementById("langExportBtnTxt").textContent="Translating...";
-      document.getElementById("langExportBtn").disabled=true;
-      
+      closeModal("langModal");
       let itObj=_exportItinObj;
       if(!itObj){
         // save first then export
         const payload=collectItinForm();
-        if(!payload.title){
-          toast("Title is required","error");
-          document.getElementById("langExportBtnTxt").textContent=exportFormat==="docx"?"Export Word (.docx)":"Print / Save PDF";
-          document.getElementById("langExportBtn").disabled=false;
-          return;
-        }
+        if(!payload.title){toast("Title is required","error");return;}
         try{
           if(editingItinId){const{data,error}=await window._sb.from(ITIN_TABLE).update(payload).eq("id",editingItinId).select().single();if(error)throw error;itObj=data;const idx=allItins.findIndex(x=>x.id===editingItinId);if(idx!==-1)allItins[idx]=itObj;}
           else{const{data,error}=await window._sb.from(ITIN_TABLE).insert(payload).select().single();if(error)throw error;itObj=data;allItins.unshift(itObj);editingItinId=itObj.id;}
           updateStats();renderItinTable(allItins);document.getElementById("itinCount").textContent=allItins.length;
-        }catch(e){
-          toast("Save failed: "+e.message,"error");
-          document.getElementById("langExportBtnTxt").textContent=exportFormat==="docx"?"Export Word (.docx)":"Print / Save PDF";
-          document.getElementById("langExportBtn").disabled=false;
-          return;
-        }
+        }catch(e){toast("Save failed: "+e.message,"error");return;}
       }
-
-      let exportItin = itObj;
-      if (selectedLang !== "en") {
-        exportItin = await translateItinerary(itObj, selectedLang);
-      }
-      
-      closeModal("langModal");
-      document.getElementById("langExportBtnTxt").textContent=exportFormat==="docx"?"Export Word (.docx)":"Print / Save PDF";
-      document.getElementById("langExportBtn").disabled=false;
-
-      if(exportFormat==="docx")await generateWordDoc(exportItin,selectedLang);
-      else await generateAndDownloadPDF(exportItin,selectedLang);
-    }
-
-    /* ════ TRANSLATION ════ */
-    async function translateText(text, targetLang) {
-      if (!text || targetLang === 'en') return text;
-      try {
-        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
-        const data = await res.json();
-        return data[0].map(x => x[0]).join('');
-      } catch (e) {
-        console.error("Translation error:", e);
-        return text;
-      }
-    }
-
-    async function translateArray(arr, targetLang) {
-      if (!Array.isArray(arr) || !arr.length) return arr;
-      return Promise.all(arr.map(item => translateText(item, targetLang)));
-    }
-
-    async function translateItinerary(it, targetLang) {
-      toast("Translating itinerary... Please wait.", "info");
-      const translated = JSON.parse(JSON.stringify(it));
-      const tr = async (text) => translateText(text, targetLang);
-      const trArr = async (arr) => translateArray(arr, targetLang);
-
-      try {
-        if (translated.title) translated.title = await tr(translated.title);
-        if (translated.overview) translated.overview = await tr(translated.overview);
-        if (translated.duration_label) translated.duration_label = await tr(translated.duration_label);
-        
-        const wl = safeJSON(translated.welcome_letter, {});
-        if (wl.greeting) wl.greeting = await tr(wl.greeting);
-        if (wl.body) wl.body = await tr(wl.body);
-        if (wl.closing) wl.closing = await tr(wl.closing);
-        if (wl.signature) wl.signature = await tr(wl.signature);
-        if (wl.date_line) wl.date_line = await tr(wl.date_line);
-        translated.welcome_letter = wl;
-
-        translated.highlights = await trArr(safeJSON(translated.highlights, []));
-        translated.inclusions = await trArr(safeJSON(translated.inclusions, []));
-        translated.exclusions = await trArr(safeJSON(translated.exclusions, []));
-        
-        if (translated.pricing_notes) translated.pricing_notes = await tr(translated.pricing_notes);
-
-        const routeStops = safeJSON(translated.route_stops, []);
-        for (let s of routeStops) {
-          if (s.label) s.label = await tr(s.label);
-          if (s.name) s.name = await tr(s.name);
-        }
-        translated.route_stops = routeStops;
-
-        const pricingTable = safeJSON(translated.pricing_table, []);
-        for (let p of pricingTable) {
-          if (p.package) p.package = await tr(p.package);
-        }
-        translated.pricing_table = pricingTable;
-
-        const surcharges = safeJSON(translated.surcharges, []);
-        for (let s of surcharges) {
-          if (s.label) s.label = await tr(s.label);
-        }
-        translated.surcharges = surcharges;
-
-        const days = safeJSON(translated.days, []);
-        for (let d of days) {
-          if (d.title) d.title = await tr(d.title);
-          if (d.location) d.location = await tr(d.location);
-          if (d.route) d.route = await tr(d.route);
-          if (d.description) d.description = await tr(d.description);
-          if (d.meal_plan) d.meal_plan = await tr(d.meal_plan);
-          if (Array.isArray(d.activities) && d.activities.length) {
-            d.activities = await trArr(d.activities);
-          }
-        }
-        translated.days = days;
-        
-      } catch (err) {
-        console.error("Translation processing error:", err);
-        toast("Some translations failed. Proceeding with partial translations.", "error");
-      }
-      return translated;
+      if(exportFormat==="docx")await generateWordDoc(itObj,selectedLang);
+      else await generateAndDownloadPDF(itObj,selectedLang);
     }
     function exportItinPDF(){openExportModal("pdf");}
 
