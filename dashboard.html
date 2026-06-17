@@ -32956,7 +32956,7 @@
       }
 
       /* ════ PDF STYLES ════ */
-     function pdfStyleClassic(it, lang) {
+      function pdfStyleClassic(it, lang) {
         lang = lang || "en";
         const { price, incl, excl, hi } = pdfMeta(it);
         const style = "classic";
@@ -32967,35 +32967,101 @@
         return (
           pdfHead(it.title, linen, lang) +
           pdfWelcomePage(it, style) +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
-          '<div style="background:' + dkBrn + ';padding:38px 44px 30px;position:relative;overflow:hidden;">' +
-          '<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:' + gold + ';"></div>' +
-          '<div style="position:absolute;top:20px;right:44px;z-index:2;">' + logoHeaderHTML(it) + "</div>" +
-          "<div style=\"font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(241,146,51,.6);margin-bottom:14px;\">" + esc(L(it, "proposal", "Safari ASAP · Itinerary Proposal")) + "</div>" +
-          "<div style=\"font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1.15;margin-bottom:8px;\">" + esc(it.title) + "</div>" +
-          (it.client_name ? '<div style="font-size:14px;color:rgba(232,213,168,.72);margin-bottom:18px;">' + esc(L(it, "preparedFor", "Prepared for")) + " " + esc(it.client_name) + "</div>" : "") +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';">' +
+          '<div style="background:' +
+          dkBrn +
+          ';padding:38px 44px 30px;position:relative;overflow:hidden;">' +
+          '<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:' +
+          gold +
+          ';"></div>' +
+          '<div style="position:absolute;top:20px;right:44px;z-index:2;">' +
+          logoHeaderHTML(it) +
+          "</div>" +
+          "<div style=\"font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(241,146,51,.6);margin-bottom:14px;\">" +
+          esc(L(it, "proposal", "Safari ASAP · Itinerary Proposal")) +
+          "</div>" +
+          "<div style=\"font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1.15;margin-bottom:8px;\">" +
+          esc(it.title) +
+          "</div>" +
+          (it.client_name
+            ? '<div style="font-size:14px;color:rgba(232,213,168,.72);margin-bottom:18px;">' +
+              esc(L(it, "preparedFor", "Prepared for")) +
+              " " +
+              esc(it.client_name) +
+              "</div>"
+            : "") +
           '<div style="display:flex;gap:28px;flex-wrap:wrap;">' +
-          (it.duration_label ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "duration", "Duration")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + esc(it.duration_label) + "</div></div>" : "") +
-          (it.group_size ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "group", "Group")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + it.group_size + " Pax</div></div>" : "") +
-          (it.start_date ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "departure", "Departure")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + fmtDate(it.start_date) + "</div></div>" : "") +
-          (price ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "from", "From")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + esc(price) + "</div></div>" : "") +
-          (it.reference_code ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "reference", "Reference")) + '</div><div style="font-family:monospace;font-size:13px;color:#E8D5A8;">' + esc(it.reference_code) + "</div></div>" : "") +
+          (it.duration_label
+            ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "duration", "Duration")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" +
+              esc(it.duration_label) +
+              "</div></div>"
+            : "") +
+          (it.group_size
+            ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "group", "Group")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" +
+              it.group_size +
+              " Pax</div></div>"
+            : "") +
+          (it.start_date
+            ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "departure", "Departure")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" +
+              fmtDate(it.start_date) +
+              "</div></div>"
+            : "") +
+          (price
+            ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "from", "From")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" +
+              esc(price) +
+              "</div></div>"
+            : "") +
+          (it.reference_code
+            ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "reference", "Reference")) +
+              '</div><div style="font-family:monospace;font-size:13px;color:#E8D5A8;">' +
+              esc(it.reference_code) +
+              "</div></div>"
+            : "") +
           "</div></div>" +
-          (it.hero_image ? '<div style="height:240px;overflow:hidden;"><img src="' + esc(it.hero_image) + '" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85);" onerror="this.style.display=\'none\'"/></div>' : "") +
+          (it.hero_image
+            ? '<div style="height:240px;overflow:hidden;"><img src="' +
+              esc(it.hero_image) +
+              '" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85);" onerror="this.style.display=\'none\'"/></div>'
+            : "") +
           '<div style="padding:36px 44px 28px;">' +
-          (it.overview ? pdfSectionHdr(L(it, "overview", "Overview"), style) + '<div style="font-size:13px;color:' + txtC + ';line-height:1.9;margin-bottom:24px;">' + esc(it.overview) + "</div>" : "") +
-          (hi.length ? pdfSectionHdr(L(it, "tourHighlights", "Tour Highlights"), style) + pdfHighlights(hi, style) : "") +
+          (it.overview
+            ? pdfSectionHdr(L(it, "overview", "Overview"), style) +
+              '<div style="font-size:13px;color:' +
+              txtC +
+              ';line-height:1.9;margin-bottom:24px;">' +
+              esc(it.overview) +
+              "</div>"
+            : "") +
+          (hi.length
+            ? pdfSectionHdr(L(it, "tourHighlights", "Tour Highlights"), style) +
+              pdfHighlights(hi, style)
+            : "") +
           "</div>" +
           pdfFooter(it, style) +
           "</div>" +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';">' +
           '<div style="padding:36px 44px 28px;">' +
           pdfSectionHdr(L(it, "dayByDay", "Day-by-Day Programme"), style) +
           pdfDaysHTML(it, style) +
           "</div>" +
           pdfFooter(it, style) +
           "</div>" +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';">' +
           '<div style="padding:36px 44px 32px;">' +
           pdfSectionHdr(L(it, "whatsIncluded", "What's Included"), style) +
           pdfInclExcl(incl, excl, style, it) +
@@ -33006,7 +33072,8 @@
           "</div>" +
           "</div></body></html>"
         );
-      } function pdfStyleMinimal(it, lang) {
+      }
+      function pdfStyleMinimal(it, lang) {
         lang = lang || "en";
         const { price, incl, excl, hi } = pdfMeta(it);
         const style = "minimal";
