@@ -32376,7 +32376,7 @@
           //     getLangLabel(lang) +
           //     " Translation</div>"
           //   : ""
-          "";
+            "";
         return (
           '<!DOCTYPE html><html lang="' +
           lang +
@@ -32384,12 +32384,12 @@
           esc(title) +
           "</title>" +
           '<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>' +
-          "<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{font-size:16px;background:" +
+          "<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{font-size:14px;background:" +
           outerBg +
           "}body{font-family:'Montserrat',sans-serif;background:" +
           outerBg +
-          ";min-height:100vh;padding:32px 0 60px;}.pdf-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:0;box-shadow:0 8px 48px rgba(0,0,0,.28)}.pdf-page{background:#fff;width:100%;position:relative;}" +
-          "@media print{@page{margin:14mm 12mm 14mm 12mm;size:A4 portrait}html,body{background:#fff!important;padding:0!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.pdf-wrap{max-width:none!important;margin:0!important;box-shadow:none!important;}.pdf-page{width:100%!important;}.no-print{display:none!important}.day-block{page-break-inside:avoid;break-inside:avoid}.accom-block{page-break-inside:avoid;break-inside:avoid}.section-block{page-break-inside:avoid;break-inside:avoid}.page-hdr{page-break-after:avoid;break-after:avoid}}" +
+          ";min-height:100vh;padding:32px 0 60px;}.pdf-wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:24px;box-shadow:0 8px 48px rgba(0,0,0,.28)}.pdf-page{background:#fff;width:100%;position:relative;overflow:hidden;page-break-after:always;break-after:page}.pdf-page:last-child{page-break-after:auto;break-after:auto}" +
+          "@media print{@page{margin:0;size:A4 portrait}html,body{background:#fff!important;padding:0!important}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.pdf-wrap{max-width:none!important;margin:0!important;box-shadow:none!important;gap:0!important}.pdf-page{width:210mm!important;min-height:297mm!important;page-break-after:always;break-after:page}.pdf-page:last-child{page-break-after:auto;break-after:auto}.no-print{display:none!important}}" +
           ".no-print{position:fixed;top:20px;right:24px;z-index:9999;display:flex;gap:10px;align-items:center}.pdf-print-btn{background:#F19233;color:#fff;border:none;padding:10px 22px;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .2s}.pdf-print-btn:hover{background:#3C2414}.pdf-print-btn svg{width:15px;height:15px;fill:currentColor}" +
           "</style></head><body>" +
           langNote +
@@ -32546,35 +32546,35 @@
         };
         const lvlC = lvlColors[level] || metaC;
         return (
-          '<div class="accom-block" style="margin-top:20px;padding:16px 20px 14px;background:' +
+          '<div style="margin-top:18px;padding:14px 18px 12px;background:' +
           blockBg +
           ";border-left:3px solid " +
           bdrL +
           ';border-radius:0 4px 4px 0;">' +
-          '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px;">' +
-          "<div style=\"font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;color:" +
+          '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-bottom:8px;">' +
+          "<div style=\"font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:" +
           nameC +
           ';text-transform:uppercase;">' +
           esc(name) +
           "</div>" +
           (levelLabel
-            ? '<span style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:' +
+            ? '<span style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:' +
               lvlC +
               ";border:1px solid " +
               lvlC +
-              '44;padding:3px 8px;border-radius:2px;">' +
+              '44;padding:2px 7px;border-radius:2px;">' +
               esc(levelLabel) +
               "</span>"
             : "") +
           (location
-            ? '<span style="font-size:11px;color:' +
+            ? '<span style="font-size:9px;color:' +
               metaC +
               ';">📍 ' +
               esc(location) +
               "</span>"
             : "") +
           (mealPlan
-            ? '<span style="font-size:11px;color:' +
+            ? '<span style="font-size:9px;color:' +
               metaC +
               ';">🍽 ' +
               esc(mealPlan) +
@@ -32583,25 +32583,25 @@
           "</div>" +
           '<div style="height:1px;background:' +
           divC +
-          ';margin-bottom:12px;"></div>' +
+          ';margin-bottom:10px;"></div>' +
           (desc
-            ? '<div style="font-size:12px;color:' +
+            ? '<div style="font-size:10.5px;color:' +
               txtC +
-              ';line-height:1.85;margin-bottom:12px;">' +
+              ';line-height:1.8;margin-bottom:10px;">' +
               esc(desc) +
               "</div>"
             : "") +
           (highlights.length
-            ? '<div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:12px;">' +
+            ? '<div style="display:flex;flex-wrap:wrap;gap:5px 16px;margin-bottom:10px;">' +
               highlights
                 .slice(0, 8)
                 .map(
                   (h) =>
-                    '<span style="font-size:11px;color:' +
+                    '<span style="font-size:9.5px;color:' +
                     hiC +
                     ';display:flex;align-items:center;gap:4px;"><span style="color:' +
                     dotC +
-                    ';font-size:8px;">◆</span>' +
+                    ';font-size:7px;">◆</span>' +
                     esc(h) +
                     "</span>",
                 )
@@ -32617,7 +32617,7 @@
         const days = safeJSON(it.days, []);
         if (!days.length)
           return (
-            '<p style="color:#aaa;font-style:italic;font-size:13px;padding:16px 0;">' +
+            '<p style="color:#aaa;font-style:italic;font-size:11px;padding:16px 0;">' +
             esc(L(it, "noDays", "No itinerary days added.")) +
             "</p>"
           );
@@ -32644,42 +32644,42 @@
             const txtC = isDark ? "rgba(232,213,168,.78)" : "#5C3E22";
             const metaC = isDark ? "rgba(241,146,51,.6)" : "#9C7A50";
             return (
-              '<div class="day-block" style="margin-bottom:' +
-              (di < days.length - 1 ? "32px" : "0") +
+              '<div style="margin-bottom:' +
+              (di < days.length - 1 ? "28px" : "0") +
               ";padding-bottom:" +
-              (di < days.length - 1 ? "32px" : "0") +
+              (di < days.length - 1 ? "28px" : "0") +
               ";border-bottom:" +
               (di < days.length - 1 ? "1px solid " + divCol : "none") +
               ';">' +
-              '<div class="page-hdr" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap;">' +
+              '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">' +
               '<div style="background:' +
               badgeBg +
               ";color:" +
               badgeC +
-              ";font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;white-space:nowrap;border-radius:2px;\">" +
+              ";font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;white-space:nowrap;border-radius:2px;\">" +
               esc(L(it, "day", "Day")) +
               " " +
               d.day +
               "</div>" +
               (d.title
-                ? "<div style=\"font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:" +
+                ? "<div style=\"font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;color:" +
                   titleC +
                   ';letter-spacing:.5px;">' +
                   esc(d.title) +
                   "</div>"
                 : "") +
               (d.location
-                ? '<div style="font-size:11px;color:' +
+                ? '<div style="font-size:9px;color:' +
                   locC +
-                  ';letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:4px;"><span style="font-size:7px;color:rgba(241,146,51,.5);">●</span>' +
+                  ';letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:4px;"><span style="font-size:6px;color:rgba(241,146,51,.5);">●</span>' +
                   esc(d.location) +
                   "</div>"
                 : "") +
               "</div>" +
               (d.route || d.driving_hours
-                ? '<div style="display:flex;gap:20px;font-size:11px;color:' +
+                ? '<div style="display:flex;gap:18px;font-size:9px;color:' +
                   metaC +
-                  ';margin-bottom:10px;flex-wrap:wrap;">' +
+                  ';margin-bottom:8px;flex-wrap:wrap;">' +
                   (d.route
                     ? '<span style="display:flex;align-items:center;gap:5px;"><span style="color:' +
                       locC +
@@ -32697,16 +32697,16 @@
                   "</div>"
                 : "") +
               (d.description
-                ? '<div style="font-size:13px;color:' +
+                ? '<div style="font-size:10.5px;color:' +
                   txtC +
-                  ';line-height:1.9;margin-bottom:10px;">' +
+                  ';line-height:1.85;margin-bottom:8px;">' +
                   esc(d.description) +
                   "</div>"
                 : "") +
               (acts
-                ? '<div style="font-size:12px;color:' +
+                ? '<div style="font-size:9.5px;color:' +
                   metaC +
-                  ';margin-bottom:8px;font-weight:500;">◈ ' +
+                  ';margin-bottom:6px;font-weight:500;">◈ ' +
                   esc(acts) +
                   "</div>"
                 : "") +
@@ -32956,7 +32956,7 @@
       }
 
       /* ════ PDF STYLES ════ */
-     function pdfStyleClassic(it, lang) {
+      function pdfStyleClassic(it, lang) {
         lang = lang || "en";
         const { price, incl, excl, hi } = pdfMeta(it);
         const style = "classic";
@@ -32967,36 +32967,100 @@
         return (
           pdfHead(it.title, linen, lang) +
           pdfWelcomePage(it, style) +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
-          '<div style="background:' + dkBrn + ';padding:38px 44px 30px;position:relative;overflow:hidden;">' +
-          '<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:' + gold + ';"></div>' +
-          '<div style="position:absolute;top:20px;right:44px;z-index:2;">' + logoHeaderHTML(it) + "</div>" +
-          "<div style=\"font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(241,146,51,.6);margin-bottom:14px;\">" + esc(L(it, "proposal", "Safari ASAP · Itinerary Proposal")) + "</div>" +
-          "<div style=\"font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1.15;margin-bottom:8px;\">" + esc(it.title) + "</div>" +
-          (it.client_name ? '<div style="font-size:14px;color:rgba(232,213,168,.72);margin-bottom:18px;">' + esc(L(it, "preparedFor", "Prepared for")) + " " + esc(it.client_name) + "</div>" : "") +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';display:flex;flex-direction:column;min-height:880px;">' +
+          '<div style="background:' +
+          dkBrn +
+          ';padding:38px 44px 30px;position:relative;overflow:hidden;flex-shrink:0;">' +
+          '<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:' +
+          gold +
+          ';"></div>' +
+          '<div style="position:absolute;top:20px;right:44px;z-index:2;">' +
+          logoHeaderHTML(it) +
+          "</div>" +
+          "<div style=\"font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(241,146,51,.6);margin-bottom:14px;\">" +
+          esc(L(it, "proposal", "Safari ASAP · Itinerary Proposal")) +
+          "</div>" +
+          "<div style=\"font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1.15;margin-bottom:8px;\">" +
+          esc(it.title) +
+          "</div>" +
+          (it.client_name
+            ? '<div style="font-size:12px;color:rgba(232,213,168,.72);margin-bottom:18px;">' +
+              esc(L(it, "preparedFor", "Prepared for")) +
+              " " +
+              esc(it.client_name) +
+              "</div>"
+            : "") +
           '<div style="display:flex;gap:28px;flex-wrap:wrap;">' +
-          (it.duration_label ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "duration", "Duration")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + esc(it.duration_label) + "</div></div>" : "") +
-          (it.group_size ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "group", "Group")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + it.group_size + " Pax</div></div>" : "") +
-          (it.start_date ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "departure", "Departure")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + fmtDate(it.start_date) + "</div></div>" : "") +
-          (price ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "from", "From")) + "</div><div style=\"font-family:'Oswald',sans-serif;font-size:15px;color:#E8D5A8;\">" + esc(price) + "</div></div>" : "") +
-          (it.reference_code ? '<div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' + esc(L(it, "reference", "Reference")) + '</div><div style="font-family:monospace;font-size:13px;color:#E8D5A8;">' + esc(it.reference_code) + "</div></div>" : "") +
+          (it.duration_label
+            ? '<div><div style="font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "duration", "Duration")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:13px;color:#E8D5A8;\">" +
+              esc(it.duration_label) +
+              "</div></div>"
+            : "") +
+          (it.group_size
+            ? '<div><div style="font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "group", "Group")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:13px;color:#E8D5A8;\">" +
+              it.group_size +
+              " Pax</div></div>"
+            : "") +
+          (it.start_date
+            ? '<div><div style="font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "departure", "Departure")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:13px;color:#E8D5A8;\">" +
+              fmtDate(it.start_date) +
+              "</div></div>"
+            : "") +
+          (price
+            ? '<div><div style="font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "from", "From")) +
+              "</div><div style=\"font-family:'Oswald',sans-serif;font-size:13px;color:#E8D5A8;\">" +
+              esc(price) +
+              "</div></div>"
+            : "") +
+          (it.reference_code
+            ? '<div><div style="font-size:7.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(241,146,51,.5);">' +
+              esc(L(it, "reference", "Reference")) +
+              '</div><div style="font-family:monospace;font-size:11px;color:#E8D5A8;">' +
+              esc(it.reference_code) +
+              "</div></div>"
+            : "") +
           "</div></div>" +
-          (it.hero_image ? '<div style="height:240px;overflow:hidden;"><img src="' + esc(it.hero_image) + '" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85);" onerror="this.style.display=\'none\'"/></div>' : "") +
-          '<div style="padding:36px 44px 28px;">' +
-          (it.overview ? pdfSectionHdr(L(it, "overview", "Overview"), style) + '<div style="font-size:13px;color:' + txtC + ';line-height:1.9;margin-bottom:24px;">' + esc(it.overview) + "</div>" : "") +
-          (hi.length ? pdfSectionHdr(L(it, "tourHighlights", "Tour Highlights"), style) + pdfHighlights(hi, style) : "") +
+          (it.hero_image
+            ? '<div style="height:220px;overflow:hidden;flex-shrink:0;"><img src="' +
+              esc(it.hero_image) +
+              '" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85);" onerror="this.style.display=\'none\'"/></div>'
+            : "") +
+          '<div style="padding:32px 44px 24px;flex:1;">' +
+          (it.overview
+            ? pdfSectionHdr(L(it, "overview", "Overview"), style) +
+              '<div style="font-size:10.5px;color:' +
+              txtC +
+              ';line-height:1.9;margin-bottom:22px;">' +
+              esc(it.overview) +
+              "</div>"
+            : "") +
+          (hi.length
+            ? pdfSectionHdr(L(it, "tourHighlights", "Tour Highlights"), style) +
+              pdfHighlights(hi, style)
+            : "") +
           "</div>" +
           pdfFooter(it, style) +
           "</div>" +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
-          '<div style="padding:36px 44px 28px;">' +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';display:flex;flex-direction:column;min-height:880px;"><div style="padding:32px 44px 24px;flex:1;">' +
           pdfSectionHdr(L(it, "dayByDay", "Day-by-Day Programme"), style) +
           pdfDaysHTML(it, style) +
           "</div>" +
           pdfFooter(it, style) +
           "</div>" +
-          '<div class="pdf-page" style="background:' + linen + ';">' +
-          '<div style="padding:36px 44px 32px;">' +
+          '<div class="pdf-page" style="background:' +
+          linen +
+          ';display:flex;flex-direction:column;min-height:400px;"><div style="padding:32px 44px 28px;flex:1;">' +
           pdfSectionHdr(L(it, "whatsIncluded", "What's Included"), style) +
           pdfInclExcl(incl, excl, style, it) +
           pdfSectionHdr(L(it, "pricing", "Pricing"), style) +
@@ -33006,7 +33070,9 @@
           "</div>" +
           "</div></body></html>"
         );
-      } function pdfStyleMinimal(it, lang) {
+      }
+
+      function pdfStyleMinimal(it, lang) {
         lang = lang || "en";
         const { price, incl, excl, hi } = pdfMeta(it);
         const style = "minimal";
@@ -33158,7 +33224,7 @@
           pdfWelcomePage(it, style) +
           '<div class="pdf-page" style="background:' +
           bodyBg +
-          ';">' +
+          ';display:flex;flex-direction:column;min-height:880px;">' +
           '<div style="padding:34px 42px 26px;flex-shrink:0;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">' +
           logoHeaderHTML(it) +
