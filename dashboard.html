@@ -1774,6 +1774,66 @@
           grid-template-columns: 1fr;
         }
       }
+      /* ═══ INVOICE STYLES ═══ */
+      .inv-status-draft    { background:#f0ebe3; color:var(--warm); }
+      .inv-status-sent     { background:#d1ecf1; color:#0c5460; }
+      .inv-status-paid     { background:#d4edda; color:#155724; }
+      .inv-status-overdue  { background:#f8d7da; color:#721c24; }
+      .inv-status-cancelled{ background:#e2e3e5; color:#383d41; }
+      /* Line-item table inside modal */
+      .inv-line-tbl { width:100%; border-collapse:collapse; margin-bottom:.5rem; }
+      .inv-line-tbl th {
+        background:var(--sand); color:#fff;
+        font-family:var(--ff-h); font-size:.62rem; letter-spacing:1.5px;
+        text-transform:uppercase; padding:.5rem .65rem; text-align:left;
+      }
+      .inv-line-tbl td { padding:.35rem .5rem; border-bottom:1px solid var(--border2); vertical-align:middle; }
+      .inv-line-tbl td input, .inv-line-tbl td textarea {
+        width:100%; padding:.38rem .55rem;
+        border:1.5px solid var(--border); background:#fdfaf5;
+        font-size:.8rem; font-family:inherit; color:var(--earth-d);
+      }
+      .inv-line-tbl td input:focus, .inv-line-tbl td textarea:focus {
+        outline:none; border-color:var(--sand2);
+      }
+      .inv-line-tbl .auto-total {
+        background:#f5f0e8; color:var(--earth); font-size:.8rem;
+        padding:.38rem .55rem; display:block; min-width:90px; font-weight:600;
+      }
+      .inv-add-row {
+        color:var(--sand2); font-size:.78rem; font-weight:600;
+        cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+        margin-top:.4rem; background:none; border:none; font-family:inherit;
+      }
+      .inv-add-row:hover { color:var(--sand); }
+      .inv-del-row {
+        width:26px; height:26px; background:none; border:none;
+        color:var(--red); cursor:pointer; font-size:.8rem;
+        display:flex; align-items:center; justify-content:center;
+        opacity:.6; transition:opacity .2s;
+      }
+      .inv-del-row:hover { opacity:1; }
+      /* Summary totals */
+      .inv-totals { margin-top:.8rem; }
+      .inv-total-row {
+        display:flex; justify-content:flex-end; align-items:center;
+        gap:1.5rem; padding:.4rem 0; border-top:1px solid var(--border2);
+        font-size:.82rem;
+      }
+      .inv-total-row.grand {
+        border-top:2px solid var(--earth-d);
+        font-family:var(--ff-h); font-size:1rem; font-weight:700;
+        color:var(--earth-d); margin-top:.2rem;
+      }
+      .inv-total-label { color:var(--warm); min-width:120px; text-align:right; }
+      .inv-total-val { min-width:120px; text-align:right; font-weight:600; color:var(--earth-d); }
+      /* ── PDF PRINT INVOICE ── */
+      @media print {
+        body > *:not(#invPrintArea) { display:none !important; }
+        #invPrintArea { display:block !important; }
+        .inv-print-wrap { font-family:'Montserrat',sans-serif; font-size:11px; color:#222; padding:0; margin:0; }
+      }
+      #invPrintArea { display:none; }
     </style>
   </head>
   <body>
@@ -1816,6 +1876,10 @@
         <a class="nav-item" onclick="showSection('accommodations')"
           ><i class="fa-solid fa-hotel"></i> Accommodations
           <span class="nav-badge" id="accomCount">0</span></a
+        >
+        <a class="nav-item" onclick="showSection('invoices')"
+          ><i class="fa-solid fa-file-invoice-dollar"></i> Invoices
+          <span class="nav-badge" id="invoiceCount">0</span></a
         >
         <div class="nav-section">Account</div>
         <a class="nav-item" onclick="signOut()"
@@ -2103,7 +2167,178 @@
             </div>
           </div>
         </section>
+
+        <!-- INVOICES -->
+        <section class="page-section" id="sec-invoices">
+          <div class="page-hdr">
+            <div>
+              <h1><i class="fa-solid fa-file-invoice-dollar" style="color:var(--sand2);margin-right:.5rem"></i>Invoices</h1>
+              <p>Create and manage client invoices — stored in Supabase</p>
+            </div>
+            <button class="btn btn-sand" onclick="openInvoiceModal()">
+              <i class="fa-solid fa-plus"></i> New Invoice
+            </button>
+          </div>
+
+          <!-- stats row -->
+          <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+            <div class="stat-box">
+              <div class="stat-label">Total Invoices</div>
+              <div class="stat-value" id="invStatTotal">—</div>
+              <div class="stat-sub">All records</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Paid</div>
+              <div class="stat-value" id="invStatPaid">—</div>
+              <div class="stat-sub">Settled</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Pending</div>
+              <div class="stat-value" id="invStatPending">—</div>
+              <div class="stat-sub">Sent / Draft</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Revenue (USD)</div>
+              <div class="stat-value" id="invStatRevenue">—</div>
+              <div class="stat-sub">Paid invoices</div>
+            </div>
+          </div>
+
+          <!-- search / filter -->
+          <div class="search-bar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input class="search-input" type="text" id="invSearch" placeholder="Search by client, invoice #…" oninput="filterInvoices()"/>
+            </div>
+            <select class="f-select" style="width:150px;padding:.6rem .85rem" id="invStatusFilter" onchange="filterInvoices()">
+              <option value="">All Status</option>
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="card" style="padding:0">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Invoice #</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Due Date</th>
+                    <th>Amount (USD)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="invTbody">
+                  <tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin"></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </main>
+    </div>
+
+    <!-- hidden print area -->
+    <div id="invPrintArea"></div>
+
+    <!-- ══════════════ INVOICE MODAL ══════════════ -->
+    <div class="modal-overlay" id="invoiceModal">
+      <div class="modal" style="max-width:900px">
+        <div class="modal-hdr">
+          <h2><i class="fa-solid fa-file-invoice-dollar"></i><span id="invoiceModalTitle">New Invoice</span></h2>
+          <button class="modal-close" onclick="closeModal('invoiceModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- header info row -->
+          <div class="form-grid" style="margin-bottom:1.2rem">
+            <div class="field">
+              <label>Invoice Number <span class="req">*</span></label>
+              <input class="f-input" type="text" id="inv_number" placeholder="INV-000001" readonly style="background:#f0ebe3"/>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select class="f-select" id="inv_status">
+                <option value="draft">Draft</option>
+                <option value="sent">Sent</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Invoice Date <span class="req">*</span></label>
+              <input class="f-input" type="date" id="inv_date"/>
+            </div>
+            <div class="field">
+              <label>Due Date</label>
+              <input class="f-input" type="date" id="inv_due_date"/>
+            </div>
+          </div>
+
+          <!-- client info -->
+          <div class="form-section">
+            <div class="form-section-title">Bill To</div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Client / Company Name <span class="req">*</span></label>
+                <input class="f-input" type="text" id="inv_client_name" placeholder="e.g. Soma Bags"/>
+              </div>
+              <div class="field">
+                <label>Client Email</label>
+                <input class="f-input" type="email" id="inv_client_email" placeholder="client@email.com"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- line items -->
+          <div class="form-section">
+            <div class="form-section-title">Services / Line Items</div>
+            <table class="inv-line-tbl" id="invLineTable">
+              <thead>
+                <tr>
+                  <th style="width:28%">Service</th>
+                  <th style="width:20%">Description</th>
+                  <th style="width:10%">No. of Pax</th>
+                  <th style="width:14%">Price / Person (USD)</th>
+                  <th style="width:14%">Supplement (USD)</th>
+                  <th style="width:11%">Total</th>
+                  <th style="width:3%"></th>
+                </tr>
+              </thead>
+              <tbody id="invLineBody"></tbody>
+            </table>
+            <button class="inv-add-row" onclick="invAddRow()"><i class="fa-solid fa-plus"></i> Add Row</button>
+          </div>
+
+          <!-- totals -->
+          <div class="inv-totals">
+            <div class="inv-total-row">
+              <span class="inv-total-label">Sub Total:</span>
+              <span class="inv-total-val" id="invSubtotalDisplay">$0.00</span>
+            </div>
+            <div class="inv-total-row grand">
+              <span class="inv-total-label">Total:</span>
+              <span class="inv-total-val" id="invTotalDisplay">$0.00</span>
+            </div>
+          </div>
+
+          <!-- notes -->
+          <div class="field" style="margin-top:1.2rem">
+            <label>Notes / Terms</label>
+            <textarea class="f-textarea" id="inv_notes" rows="3" placeholder="Payment terms, cancellation policy…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('invoiceModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="saveInvoice()"><i class="fa-solid fa-floppy-disk"></i> Save Invoice</button>
+        </div>
+      </div>
     </div>
 
     <!-- ══════════════ ITINERARY MODAL ══════════════ -->
@@ -30452,6 +30687,7 @@
           loadDests(),
           loadAccoms(),
           loadGallery(),
+          loadInvoices(),
         ]);
       })();
 
@@ -30472,6 +30708,7 @@
         if (name === "destinations") renderDestCards(allDests);
         if (name === "accommodations") renderAccomCards(allAccoms);
         if (name === "gallery") renderGalGrid();
+        if (name === "invoices") { renderInvoiceTable(allInvoices); updateInvoiceStats(); }
       }
       async function signOut() {
         await window._sb.auth.signOut();
@@ -34318,6 +34555,381 @@
               (!lv || a.level === lv),
           ),
         );
+      }
+
+      /* ══════════════════════════════════════════════
+         INVOICES MODULE
+      ══════════════════════════════════════════════ */
+      const INV_TABLE = "invoices";
+      let allInvoices = [];
+      let editingInvoiceId = null;
+      let invRowCounter = 0;
+
+      /* ── Load invoices from Supabase ── */
+      async function loadInvoices() {
+        const { data, error } = await window._sb
+          .from(INV_TABLE)
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (error) { toast("Error loading invoices: " + error.message, "error"); return; }
+        allInvoices = data || [];
+        renderInvoiceTable(allInvoices);
+        updateInvoiceStats();
+        document.getElementById("invoiceCount").textContent = allInvoices.length;
+      }
+
+      /* ── Render invoice table rows ── */
+      function renderInvoiceTable(list) {
+        const tb = document.getElementById("invTbody");
+        if (!list.length) {
+          tb.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <h3>No Invoices Yet</h3><p>Create your first invoice using the button above.</p>
+          </div></td></tr>`;
+          return;
+        }
+        tb.innerHTML = list.map(inv => {
+          const statusCls = `inv-status-${inv.status || 'draft'}`;
+          const amt = inv.total_amount ? `$${Number(inv.total_amount).toLocaleString('en-US',{minimumFractionDigits:2})}` : '—';
+          return `<tr>
+            <td><span class="tbl-title">${inv.invoice_number || '—'}</span></td>
+            <td>
+              <div class="tbl-title">${inv.client_name || '—'}</div>
+              <div class="tbl-sub">${inv.client_email || ''}</div>
+            </td>
+            <td>${inv.invoice_date ? fmtDate(inv.invoice_date) : '—'}</td>
+            <td>${inv.due_date ? fmtDate(inv.due_date) : '—'}</td>
+            <td><strong>${amt}</strong></td>
+            <td><span class="badge ${statusCls}">${(inv.status||'draft').toUpperCase()}</span></td>
+            <td>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <button class="btn-icon edit" title="Edit" onclick="openInvoiceModal('${inv.id}')"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-icon view" title="Print PDF" onclick="printInvoice('${inv.id}')"><i class="fa-solid fa-print"></i></button>
+                <button class="btn-icon del" title="Delete" onclick="confirmDeleteInvoice('${inv.id}','${(inv.invoice_number||'').replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>`;
+        }).join('');
+      }
+
+      function fmtDate(d) {
+        if (!d) return '—';
+        const dt = new Date(d + 'T00:00:00');
+        return dt.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+      }
+
+      /* ── Invoice stats ── */
+      function updateInvoiceStats() {
+        const total = allInvoices.length;
+        const paid = allInvoices.filter(i => i.status === 'paid').length;
+        const pending = allInvoices.filter(i => i.status === 'draft' || i.status === 'sent').length;
+        const revenue = allInvoices.filter(i => i.status === 'paid').reduce((s,i) => s + Number(i.total_amount || 0), 0);
+        document.getElementById("invStatTotal").textContent = total;
+        document.getElementById("invStatPaid").textContent = paid;
+        document.getElementById("invStatPending").textContent = pending;
+        document.getElementById("invStatRevenue").textContent = revenue ? `$${revenue.toLocaleString('en-US',{minimumFractionDigits:0})}` : '$0';
+      }
+
+      /* ── Open invoice modal (new or edit) ── */
+      async function openInvoiceModal(id) {
+        editingInvoiceId = id || null;
+        invRowCounter = 0;
+        document.getElementById("invLineBody").innerHTML = "";
+        resetInvTotals();
+
+        if (id) {
+          document.getElementById("invoiceModalTitle").textContent = "Edit Invoice";
+          const inv = allInvoices.find(x => x.id === id);
+          if (!inv) return;
+          document.getElementById("inv_number").value = inv.invoice_number || "";
+          document.getElementById("inv_status").value = inv.status || "draft";
+          document.getElementById("inv_date").value = inv.invoice_date || "";
+          document.getElementById("inv_due_date").value = inv.due_date || "";
+          document.getElementById("inv_client_name").value = inv.client_name || "";
+          document.getElementById("inv_client_email").value = inv.client_email || "";
+          document.getElementById("inv_notes").value = inv.notes || "";
+          const items = Array.isArray(inv.line_items) ? inv.line_items : [];
+          if (items.length) items.forEach(r => invAddRow(r));
+          else invAddRow();
+        } else {
+          document.getElementById("invoiceModalTitle").textContent = "New Invoice";
+          const today = new Date().toISOString().slice(0,10);
+          const due = new Date(Date.now() + 30*86400000).toISOString().slice(0,10);
+          document.getElementById("inv_number").value = await generateInvNumber();
+          document.getElementById("inv_status").value = "draft";
+          document.getElementById("inv_date").value = today;
+          document.getElementById("inv_due_date").value = due;
+          document.getElementById("inv_client_name").value = "";
+          document.getElementById("inv_client_email").value = "";
+          document.getElementById("inv_notes").value = "";
+          invAddRow();
+        }
+        recalcInvTotals();
+        openModal("invoiceModal");
+      }
+
+      /* ── Generate invoice number ── */
+      async function generateInvNumber() {
+        const { data } = await window._sb.from(INV_TABLE).select("invoice_number").order("created_at",{ascending:false}).limit(1);
+        if (data && data.length) {
+          const last = data[0].invoice_number || "INV-001000";
+          const num = parseInt(last.replace("INV-","")) || 1000;
+          return "INV-" + String(num + 1).padStart(6, "0");
+        }
+        return "INV-001001";
+      }
+
+      /* ── Add a line-item row ── */
+      function invAddRow(data) {
+        const id = ++invRowCounter;
+        const d = data || {};
+        const row = document.createElement("tr");
+        row.id = "invRow" + id;
+        row.innerHTML = `
+          <td><input type="text" placeholder="Service name" value="${d.service||''}" oninput="recalcInvTotals()"/></td>
+          <td><input type="text" placeholder="Description" value="${d.description||''}" oninput="recalcInvTotals()"/></td>
+          <td><input type="number" placeholder="0" min="0" value="${d.num_pax||''}" oninput="recalcInvTotals()" style="text-align:center"/></td>
+          <td><input type="number" placeholder="0.00" min="0" step="0.01" value="${d.price_per_person||''}" oninput="recalcInvTotals()"/></td>
+          <td><input type="number" placeholder="0.00" step="0.01" value="${d.supplement||''}" oninput="recalcInvTotals()"/></td>
+          <td><span class="auto-total" id="invRowTotal${id}">$0.00</span></td>
+          <td><button class="inv-del-row" onclick="invRemoveRow(${id})"><i class="fa-solid fa-times"></i></button></td>`;
+        document.getElementById("invLineBody").appendChild(row);
+        recalcInvTotals();
+      }
+
+      function invRemoveRow(id) {
+        const r = document.getElementById("invRow" + id);
+        if (r) r.remove();
+        recalcInvTotals();
+      }
+
+      /* ── Recalculate totals ── */
+      function recalcInvTotals() {
+        let sub = 0;
+        const rows = document.getElementById("invLineBody").querySelectorAll("tr");
+        rows.forEach(row => {
+          const inputs = row.querySelectorAll("input");
+          if (inputs.length < 4) return;
+          const pax = parseFloat(inputs[2].value) || 0;
+          const rate = parseFloat(inputs[3].value) || 0;
+          const supp = parseFloat(inputs[4].value) || 0;
+          const rowTotal = (pax * rate) + supp;
+          const totalSpan = row.querySelector(".auto-total");
+          if (totalSpan) totalSpan.textContent = "$" + rowTotal.toLocaleString("en-US",{minimumFractionDigits:2});
+          sub += rowTotal;
+        });
+        document.getElementById("invSubtotalDisplay").textContent = "$" + sub.toLocaleString("en-US",{minimumFractionDigits:2});
+        document.getElementById("invTotalDisplay").textContent = "$" + sub.toLocaleString("en-US",{minimumFractionDigits:2});
+      }
+
+      function resetInvTotals() {
+        document.getElementById("invSubtotalDisplay").textContent = "$0.00";
+        document.getElementById("invTotalDisplay").textContent = "$0.00";
+      }
+
+      /* ── Collect line items from DOM ── */
+      function collectLineItems() {
+        const items = [];
+        const rows = document.getElementById("invLineBody").querySelectorAll("tr");
+        rows.forEach(row => {
+          const inputs = row.querySelectorAll("input");
+          if (inputs.length < 4) return;
+          const pax = parseFloat(inputs[2].value) || 0;
+          const rate = parseFloat(inputs[3].value) || 0;
+          const supp = parseFloat(inputs[4].value) || 0;
+          items.push({
+            service: inputs[0].value.trim(),
+            description: inputs[1].value.trim(),
+            num_pax: pax,
+            price_per_person: rate,
+            supplement: supp,
+            total: (pax * rate) + supp
+          });
+        });
+        return items;
+      }
+
+      /* ── Save (create or update) invoice ── */
+      async function saveInvoice() {
+        const client = document.getElementById("inv_client_name").value.trim();
+        const invNum = document.getElementById("inv_number").value.trim();
+        if (!client) { toast("Client name is required.", "error"); return; }
+        if (!invNum) { toast("Invoice number is required.", "error"); return; }
+
+        const items = collectLineItems();
+        const subtotal = items.reduce((s, r) => s + r.total, 0);
+
+        const payload = {
+          invoice_number: invNum,
+          invoice_date: document.getElementById("inv_date").value || null,
+          due_date: document.getElementById("inv_due_date").value || null,
+          client_name: client,
+          client_email: document.getElementById("inv_client_email").value.trim() || null,
+          status: document.getElementById("inv_status").value,
+          notes: document.getElementById("inv_notes").value.trim() || null,
+          line_items: items,
+          subtotal: subtotal,
+          total_amount: subtotal,
+          currency: "USD"
+        };
+
+        let error;
+        if (editingInvoiceId) {
+          ({ error } = await window._sb.from(INV_TABLE).update(payload).eq("id", editingInvoiceId));
+        } else {
+          ({ error } = await window._sb.from(INV_TABLE).insert([payload]));
+        }
+
+        if (error) { toast("Save failed: " + error.message, "error"); return; }
+        toast(editingInvoiceId ? "Invoice updated." : "Invoice created.", "success");
+        closeModal("invoiceModal");
+        loadInvoices();
+      }
+
+      /* ── Delete invoice ── */
+      let pendingInvDeleteId = null;
+      function confirmDeleteInvoice(id, num) {
+        pendingInvDeleteId = id;
+        document.getElementById("confirmTitle").textContent = "Delete Invoice?";
+        document.getElementById("confirmMsg").textContent = `Permanently delete invoice "${num}"? This cannot be undone.`;
+        document.getElementById("confirmOkBtn").onclick = doDeleteInvoice;
+        document.getElementById("confirmOverlay").classList.add("open");
+      }
+      async function doDeleteInvoice() {
+        closeConfirm();
+        if (!pendingInvDeleteId) return;
+        const { error } = await window._sb.from(INV_TABLE).delete().eq("id", pendingInvDeleteId);
+        if (error) { toast("Delete failed: " + error.message, "error"); return; }
+        allInvoices = allInvoices.filter(x => x.id !== pendingInvDeleteId);
+        renderInvoiceTable(allInvoices);
+        updateInvoiceStats();
+        document.getElementById("invoiceCount").textContent = allInvoices.length;
+        toast("Invoice deleted.", "success");
+        pendingInvDeleteId = null;
+      }
+
+      /* ── Filter invoices ── */
+      function filterInvoices() {
+        const q = document.getElementById("invSearch").value.toLowerCase();
+        const st = document.getElementById("invStatusFilter").value;
+        renderInvoiceTable(allInvoices.filter(inv =>
+          (!q || (inv.invoice_number||"").toLowerCase().includes(q) ||
+                 (inv.client_name||"").toLowerCase().includes(q) ||
+                 (inv.client_email||"").toLowerCase().includes(q)) &&
+          (!st || inv.status === st)
+        ));
+      }
+
+      /* ── Print / PDF invoice ── */
+      function printInvoice(id) {
+        const inv = allInvoices.find(x => x.id === id);
+        if (!inv) return;
+        const items = Array.isArray(inv.line_items) ? inv.line_items : [];
+        const fmtUSD = n => "$" + Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2});
+
+        const rows = items.map(r => `
+          <tr>
+            <td style="padding:10px 8px;border-bottom:1px solid #eee;vertical-align:top">
+              <strong style="display:block">${r.service||''}</strong>
+              <span style="color:#888;font-size:11px">${r.description||''}</span>
+            </td>
+            <td style="padding:10px 8px;border-bottom:1px solid #eee;text-align:center">${r.num_pax||''}</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #eee">${r.price_per_person ? fmtUSD(r.price_per_person) : '—'}</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #eee">${r.supplement ? fmtUSD(r.supplement) : '—'}</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #eee;font-weight:600">${fmtUSD(r.total)}</td>
+          </tr>`).join('');
+
+        const notesHtml = inv.notes ? `
+          <div style="margin-top:30px">
+            <p style="font-weight:700;margin-bottom:6px">Terms &amp; Conditions:</p>
+            <p style="color:#555;font-size:12px;line-height:1.6">${inv.notes}</p>
+          </div>
+          <div style="margin-top:18px">
+            <p style="font-weight:700;margin-bottom:4px">Booking &amp; Payment Terms</p>
+            <p style="font-size:12px;color:#555;line-height:1.6">A 50% non-refundable deposit is required at the time of booking with the balance to be paid at least 60 days before the tour begins.</p>
+            <p style="font-weight:700;margin:10px 0 4px"><strong>All the payments should be FREE FROM BANK CHARGES</strong></p>
+            <p style="font-weight:700;margin-bottom:4px">Cancellation policy:</p>
+            <ul style="font-size:12px;color:#555;margin-left:18px;line-height:1.8">
+              <li>60 days to 30 days before arrival: 50%</li>
+              <li>29 days to 7 days before arrival: 65%</li>
+              <li>Within 6 Days: 100%</li>
+            </ul>
+          </div>
+          <div style="margin-top:20px">
+            <p style="font-weight:700;font-size:13px">ACCOUNT DETAILS:</p>
+            <ul style="font-size:12px;color:#333;margin-left:18px;line-height:1.9">
+              <li>BENEFICIARY A/C NAME: <strong>SAFARI ASAP</strong></li>
+              <li>BENEFICIARY A/C NUMBER: <strong>3391243759</strong></li>
+              <li>ACCOUNT CURRENCY: <strong>USD</strong></li>
+              <li>BANK BRANCH: <strong>ARUSHA PAPU</strong></li>
+              <li>BENEFICIARY ADDRESS: <strong>GOLIONDOI-SEKEI-ARUSHA, TANZANIA</strong></li>
+              <li>SWIFT: <strong>KCBLTZTZ</strong></li>
+              <li>BANK ADDRESS: <strong>KCB BANK TANZANIA LIMITED, ALI HASSAN, MWINYI/KAUNDA DRIVE JUNCTION</strong></li>
+              <li>BENEFICIARY BANK &amp; ADDERS: <strong>P.O.BOX 804, DAR ES SALAAM, TANZANIA.</strong></li>
+            </ul>
+          </div>` : '';
+
+        document.getElementById("invPrintArea").innerHTML = `
+          <div class="inv-print-wrap" style="max-width:750px;margin:0 auto;padding:30px;font-family:'Montserrat',sans-serif;font-size:12px;color:#333">
+            <!-- header -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px">
+              <div>
+                <img src="logo.jpeg" alt="Safari ASAP" style="height:50px;margin-bottom:10px" onerror="this.style.display='none'"/>
+                <p style="font-weight:700;font-size:14px;margin:0">Safari ASAP</p>
+                <p style="color:#555;margin:2px 0;font-size:11px">15933 Mianzini, Arusha, Tanzania</p>
+                <p style="color:#555;margin:2px 0;font-size:11px">114-643-874</p>
+                <p style="color:#555;margin:2px 0;font-size:11px">contact@safariasap.com</p>
+                <p style="color:#555;margin:2px 0;font-size:11px">Phone: +255788519851</p>
+                <p style="color:#555;margin:2px 0;font-size:11px">http://www.safariasap.com</p>
+              </div>
+              <div style="text-align:right">
+                <p style="font-size:26px;font-weight:300;letter-spacing:2px;margin:0 0 8px;color:#3c2414">${inv.client_name||''}</p>
+                <p style="color:#555;font-size:12px;margin:2px 0">Invoice Number <strong>${inv.invoice_number||''}</strong></p>
+                <p style="color:#555;font-size:12px;margin:2px 0">Invoice Date <strong>${inv.invoice_date ? fmtDate(inv.invoice_date) : ''}</strong></p>
+                <p style="color:#555;font-size:12px;margin:2px 0">Due Date <strong>${inv.due_date ? fmtDate(inv.due_date) : ''}</strong></p>
+              </div>
+            </div>
+            <hr style="border:none;border-top:1px solid #ddd;margin-bottom:20px"/>
+            <!-- to -->
+            <div style="margin-bottom:20px">
+              <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:4px">TO</p>
+              <p style="font-weight:600;font-size:13px;margin:0">${inv.client_name||''}</p>
+              <p style="color:#888;font-size:12px;margin:2px 0">${inv.client_email||''}</p>
+            </div>
+            <!-- line items table -->
+            <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+              <thead>
+                <tr style="border-bottom:1px solid #ccc">
+                  <th style="text-align:left;padding:8px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:1px">Service</th>
+                  <th style="text-align:center;padding:8px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:1px">No. of Pax</th>
+                  <th style="text-align:left;padding:8px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:1px">Price/Person</th>
+                  <th style="text-align:left;padding:8px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:1px">Supplement</th>
+                  <th style="text-align:left;padding:8px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:1px">Total</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <!-- totals -->
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-bottom:20px">
+              <div style="display:flex;gap:40px;padding:6px 0;border-top:1px solid #eee;width:280px;justify-content:space-between">
+                <span style="color:#888">Sub Total:</span>
+                <span style="font-weight:600">${fmtUSD(inv.subtotal||inv.total_amount)}</span>
+              </div>
+              <div style="display:flex;gap:40px;padding:6px 0;border-top:2px solid #333;width:280px;justify-content:space-between">
+                <span style="font-weight:700">Total:</span>
+                <span style="font-weight:700;font-size:15px">${fmtUSD(inv.total_amount)}</span>
+              </div>
+            </div>
+            ${notesHtml}
+          </div>`;
+
+        window.print();
+      }
+
+      /* ── Also add openModal helper if not present ── */
+      function openModal(id) {
+        document.getElementById(id)?.classList.add("open");
+        document.body.style.overflow = "hidden";
       }
     </script>
   </body>
