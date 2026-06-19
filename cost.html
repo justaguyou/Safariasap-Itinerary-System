@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safari Asap — Itinerary & Costs</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --brown: #7a5c2e;
+        --brown-light: #c9a16a;
+        --dark: #1a1a1a;
+        --page-max: 860px;
+      }
+
+      body {
+        font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+        background: #d8d4cc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 8px 60px;
+        min-height: 100vh;
+      }
+
+      /* ── TOOLBAR ── */
+      .toolbar {
+        width: 100%;
+        max-width: var(--page-max);
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+
+      .toolbar button {
+        padding: 7px 16px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
+
+      .btn-print {
+        background: #1a1a1a;
+        color: white;
+      }
+
+      .btn-save {
+        background: #2e7d32;
+        color: white;
+      }
+
+      .btn-load {
+        background: #6a1b9a;
+        color: white;
+      }
+
+      .btn-clear {
+        background: #c62828;
+        color: white;
+      }
+
+      .toolbar button:hover {
+        opacity: 0.85;
+      }
+
+      /* ── PAGE ── */
+      .page {
+        width: 100%;
+        max-width: var(--page-max);
+        background: white;
+        box-shadow: 0 3px 18px rgba(0, 0, 0, 0.22);
+      }
+
+      /* ── HEADER BAND ── */
+      .doc-header {
+        background: #1a1a1a;
+        padding: 0;
+        display: flex;
+        align-items: stretch;
+        min-height: 110px;
+        border-bottom: 4px solid var(--brown);
+      }
+
+      .header-logo {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px 0 10px;
+        background: #ffffff;
+      }
+
+      .header-logo img {
+        height: 90px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+      }
+
+      .header-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 14px 20px 14px 16px;
+      }
+
+      .header-title-input {
+        font-size: clamp(0.9rem, 2.4vw, 1.22rem);
+        font-weight: 700;
+        color: white;
+        background: transparent;
+        border: none;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+        outline: none;
+        width: 100%;
+        letter-spacing: 0.03em;
+        font-family: inherit;
+        line-height: 1.3;
+      }
+
+      .header-title-input:focus {
+        border-bottom-color: var(--brown-light);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .header-sub {
+        color: var(--brown-light);
+        font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-top: 6px;
+      }
+
+      /* ── BODY PADDING ── */
+      .doc-body {
+        padding: clamp(12px, 3vw, 28px) clamp(12px, 4vw, 36px) 32px;
+      }
+
+      /* ── ITINERARY TABLE ── */
+      .itin-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: clamp(0.72rem, 1.6vw, 0.86rem);
+      }
+
+      .itin-table th {
+        background: #1a1a1a;
+        color: white;
+        padding: 7px 8px;
+        text-align: left;
+        font-size: clamp(0.6rem, 1.4vw, 0.75rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .itin-table td {
+        padding: 4px 5px;
+        border: 1px solid #c8c8c8;
+        vertical-align: middle;
+      }
+
+      .itin-table tr:nth-child(even) td {
+        background: #f7f5f0;
+      }
+
+      .cell-in {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 2px 3px;
+        outline: none;
+        color: #111;
+      }
+
+      .cell-in:focus {
+        background: #fffbee;
+        border-radius: 2px;
+      }
+
+      .cell-in.mp {
+        width: 44px;
+        text-align: center;
+      }
+
+      .del-row {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 0 3px;
+        line-height: 1;
+      }
+
+      .del-row:hover {
+        color: #c62828;
+      }
+
+      /* ── SECTION HEAD ── */
+      .sec-head {
+        background: #ffff00;
+        font-weight: 700;
+        font-size: clamp(0.78rem, 1.8vw, 0.92rem);
+        padding: 5px 10px;
+        margin: 20px 0 8px;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        border-left: 4px solid var(--brown);
+        color: #1a1a1a;
+      }
+
+      /* ── COST LINE ── */
+      .cost-lines {
+        width: 100%;
+      }
+
+      .cost-line {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+      }
+
+      .lbl-in {
+        flex: 0 0 clamp(100px, 20vw, 165px);
+        border: none;
+        border-bottom: 1px dashed #bbb;
+        font-size: clamp(0.72rem, 1.6vw, 0.86rem);
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        color: #111;
+        padding: 1px 2px;
+        min-width: 80px;
+      }
+
+      .lbl-in:focus {
+        border-bottom-color: #1565c0;
+        background: #fffbee;
+      }
+
+      .rate-box {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        flex: 1;
+        flex-wrap: wrap;
+      }
+
+      .rate-in {
+        width: clamp(44px, 8vw, 66px);
+        border: 1px solid #bbb;
+        border-radius: 3px;
+        text-align: right;
+        font-size: clamp(0.72rem, 1.6vw, 0.86rem);
+        padding: 3px 4px;
+        font-family: inherit;
+        outline: none;
+        background: #fafafa;
+      }
+
+      .rate-in:focus {
+        border-color: #1565c0;
+        background: #fffbee;
+      }
+
+      .sep {
+        color: #555;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0 1px;
+      }
+
+      .eq-sign {
+        font-weight: 700;
+        color: #333;
+        font-size: 0.9rem;
+        padding: 0 3px;
+      }
+
+      .result {
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 3px;
+        text-align: right;
+        padding: 3px 7px;
+        font-weight: 700;
+        font-size: clamp(0.72rem, 1.6vw, 0.88rem);
+        color: #1b5e20;
+        min-width: clamp(60px, 12vw, 90px);
+        white-space: nowrap;
+      }
+
+      .add-factor-btn {
+        background: none;
+        border: 1px solid #1565c0;
+        color: #1565c0;
+        border-radius: 3px;
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .add-factor-btn:hover {
+        background: #e3f2fd;
+      }
+
+      .del-cost {
+        background: none;
+        border: none;
+        color: #ddd;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 2px 3px;
+      }
+
+      .del-cost:hover {
+        color: #c62828;
+      }
+
+      .add-line-btn {
+        background: none;
+        border: 1px dashed #aaa;
+        color: #888;
+        font-size: clamp(0.65rem, 1.4vw, 0.78rem);
+        padding: 4px 10px;
+        cursor: pointer;
+        margin: 5px 0 2px;
+        border-radius: 3px;
+        width: 100%;
+        text-align: left;
+      }
+
+      .add-line-btn:hover {
+        border-color: var(--brown);
+        color: var(--brown);
+      }
+
+      /* ── SECTION TOTAL ── */
+      .sec-total {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 7px;
+        padding-top: 6px;
+        border-top: 2px solid #1a1a1a;
+        flex-wrap: wrap;
+      }
+
+      .sec-total-lbl {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .sec-total-lbl-in {
+        font-weight: 700;
+        font-size: clamp(0.72rem, 1.6vw, 0.86rem);
+        color: #1a1a1a;
+        border: none;
+        border-bottom: 1px dashed #aaa;
+        background: transparent;
+        font-family: inherit;
+        outline: none;
+        width: 100%;
+        padding: 1px 2px;
+      }
+
+      .sec-total-lbl-in:focus {
+        background: #fffbee;
+      }
+
+      .sec-total-val {
+        background: #1a1a1a;
+        color: white;
+        font-weight: 700;
+        font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+        text-align: right;
+        padding: 5px 10px;
+        border-radius: 3px;
+        min-width: clamp(70px, 14vw, 100px);
+        white-space: nowrap;
+      }
+
+      /* ── GRAND TOTAL ── */
+      .grand-block {
+        background: #ffff00;
+        padding: 10px 14px;
+        margin: 22px 0 14px;
+        border-left: 4px solid var(--brown);
+      }
+
+      .grand-formula {
+        font-size: clamp(0.72rem, 1.6vw, 0.84rem);
+        color: #333;
+        margin-bottom: 6px;
+      }
+
+      .grand-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-weight: 700;
+        font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+      }
+
+      .grand-val {
+        background: white;
+        border: 2px solid #1a1a1a;
+        padding: 3px 12px;
+        font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+        font-weight: 800;
+        color: #1a1a1a;
+        min-width: clamp(80px, 14vw, 110px);
+        text-align: right;
+        border-radius: 3px;
+      }
+
+      /* ── MARGIN / SELLING / PER PERSON ── */
+      .calc-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 9px 0;
+        flex-wrap: wrap;
+        font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+      }
+
+      .calc-row label {
+        font-weight: 600;
+        min-width: clamp(80px, 18vw, 130px);
+      }
+
+      .margin-in {
+        width: clamp(54px, 10vw, 72px);
+        border: 1px solid #bbb;
+        border-radius: 3px;
+        text-align: right;
+        padding: 4px 6px;
+        font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+        font-family: inherit;
+        outline: none;
+      }
+
+      .margin-in:focus {
+        border-color: #1565c0;
+        background: #fffbee;
+      }
+
+      .pct-label {
+        font-weight: 600;
+        color: #555;
+      }
+
+      .calc-val {
+        background: #1a1a1a;
+        color: white;
+        font-weight: 700;
+        font-size: clamp(0.82rem, 2vw, 0.96rem);
+        padding: 5px 14px;
+        border-radius: 4px;
+        min-width: clamp(80px, 16vw, 120px);
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .calc-val.gold {
+        background: linear-gradient(135deg, var(--brown), var(--brown-light));
+        color: #1a0e00;
+        font-size: clamp(0.92rem, 2.2vw, 1.1rem);
+        font-weight: 800;
+      }
+
+      /* ── FOOTER BRAND ── */
+      .doc-footer {
+        background: #1a1a1a;
+        border-top: 3px solid var(--brown);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .doc-footer img {
+        height: 36px;
+        width: auto;
+        object-fit: contain;
+        opacity: 0.8;
+        background-color: #ffffff;
+      }
+
+      .doc-footer span {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: clamp(0.55rem, 1.2vw, 0.68rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+
+        .toolbar,
+        .del-row,
+        .del-cost,
+        .add-line-btn,
+        .add-factor-btn {
+          display: none !important;
+        }
+
+        .page {
+          box-shadow: none;
+          max-width: 100%;
+        }
+
+        input {
+          border-color: transparent !important;
+          background: transparent !important;
+        }
+
+        .doc-header {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sec-head,
+        .grand-block {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .sec-total-val,
+        .grand-val,
+        .calc-val,
+        .result {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+
+      /* ── RESPONSIVE TWEAKS ── */
+      @media (max-width: 520px) {
+        .doc-header {
+          flex-direction: column;
+          min-height: auto;
+        }
+
+        .header-logo {
+          padding: 10px;
+          border-bottom: 2px solid var(--brown);
+        }
+
+        .header-logo img {
+          height: 60px;
+        }
+
+        .header-text {
+          padding: 10px 14px;
+        }
+
+        .itin-table th:nth-child(2),
+        .itin-table td:nth-child(2) {
+          display: none;
+        }
+
+        .cost-line {
+          gap: 3px;
+        }
+
+        .lbl-in {
+          flex: 0 0 90px;
+          min-width: 70px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .itin-table th:nth-child(5),
+        .itin-table td:nth-child(5) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <button class="btn-print" onclick="window.print()">🖨 Print / PDF</button>
+      <button class="btn-save" onclick="saveData()">💾 Save</button>
+      <button class="btn-load" onclick="loadData()">📂 Load Saved</button>
+      <button onclick="addItinRow()" style="background: #7a5c2e; color: white">
+        + Day
+      </button>
+      <button class="btn-clear" onclick="clearAll()">🗑 Clear</button>
+    </div>
+
+    <!-- DOCUMENT PAGE -->
+    <div class="page" id="docPage">
+      <!-- HEADER -->
+      <div class="doc-header">
+        <div class="header-logo">
+          <img src="Logo.png" alt="" />
+        </div>
+        <div class="header-text">
+          <input
+            id="docTitle"
+            class="header-title-input"
+            value="7-DAYS TANZANIA SAFARI ITINERARY &amp; COSTS (2 PAX)"
+            placeholder="Document title…"
+          />
+          <div class="header-sub">SAFARI ASAP</div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="doc-body">
+        <!-- ITINERARY TABLE -->
+        <table class="itin-table" id="itinTable">
+          <thead>
+            <tr>
+              <th style="width: 66px">Date</th>
+              <th style="width: 40px">Day</th>
+              <th>Destination / Activity</th>
+              <th style="width: 48px">MP</th>
+              <th style="width: 150px">Accommodation</th>
+              <th style="width: 24px"></th>
+            </tr>
+          </thead>
+          <tbody id="itinBody"></tbody>
+        </table>
+
+        <!-- TRANSPORT -->
+        <div class="sec-head">TRANSPORT</div>
+        <div class="cost-lines" id="lines-transport"></div>
+        <button class="add-line-btn" onclick="addCostLine('transport')">
+          + Add transport line
+        </button>
+        <div class="sec-total">
+          <div class="sec-total-lbl">
+            <input
+              class="sec-total-lbl-in"
+              id="tlbl-transport"
+              value="Transport total costs"
+            />
+          </div>
+          <div class="sec-total-val" id="ttotal-transport">0</div>
+        </div>
+
+        <!-- PARK FEES -->
+        <div class="sec-head">PARK FEES</div>
+        <div class="cost-lines" id="lines-parkfees"></div>
+        <button class="add-line-btn" onclick="addCostLine('parkfees')">
+          + Add park fee line
+        </button>
+        <div class="sec-total">
+          <div class="sec-total-lbl">
+            <input
+              class="sec-total-lbl-in"
+              id="tlbl-parkfees"
+              value="Total Park fee costs"
+            />
+          </div>
+          <div class="sec-total-val" id="ttotal-parkfees">0</div>
+        </div>
+
+        <!-- ACCOMMODATION -->
+        <div class="sec-head">ACCOMMODATION</div>
+        <div class="cost-lines" id="lines-accommodation"></div>
+        <button class="add-line-btn" onclick="addCostLine('accommodation')">
+          + Add accommodation line
+        </button>
+        <div class="sec-total">
+          <div class="sec-total-lbl">
+            <input
+              class="sec-total-lbl-in"
+              id="tlbl-accommodation"
+              value="Total accommodation costs"
+            />
+          </div>
+          <div class="sec-total-val" id="ttotal-accommodation">0</div>
+        </div>
+
+        <!-- GRAND TOTAL -->
+        <div class="grand-block">
+          <div class="grand-formula" id="grandFormula">Safari total costs</div>
+          <div class="grand-row">
+            <span>Safari total costs =</span>
+            <div class="grand-val" id="grandTotal">0</div>
+          </div>
+        </div>
+
+        <!-- MARGIN -->
+        <div class="calc-row">
+          <label>Margin</label>
+          <input
+            type="number"
+            class="margin-in"
+            id="marginPct"
+            value="10"
+            min="0"
+            max="100"
+            step="0.1"
+            oninput="recalcAll()"
+          />
+          <span class="pct-label">%</span>
+        </div>
+
+        <!-- SELLING PRICE -->
+        <div class="calc-row">
+          <label>Selling price =</label>
+          <div class="calc-val" id="sellingPrice">0</div>
+        </div>
+
+        <!-- PER PERSON -->
+        <div class="calc-row">
+          <label>Cost per person =</label>
+          <div class="calc-val gold" id="costPerPerson">$0</div>
+        </div>
+      </div>
+      <!-- /doc-body -->
+
+      <!-- FOOTER BRAND -->
+      <div class="doc-footer">
+        <img src="Logo.png" alt="" />
+        <span
+          >Safari Asap &bull; Tanzania Safari Specialists &bull; Quote valid 30
+          days</span
+        >
+      </div>
+    </div>
+    <!-- /page -->
+
+    <script>
+      const SECS = ["transport", "parkfees", "accommodation"];
+      const DEFAULTS = {
+        itin: [
+          {
+            date: "1 Sept",
+            day: "1",
+            dest: "Arrival Julius Nyerere Airport and transfer to Ruaha",
+            mp: "HB",
+            accom: "Ruaha River Lodge",
+          },
+          {
+            date: "2 Sept",
+            day: "2",
+            dest: "Full day game drive in Ruaha National Park",
+            mp: "FB",
+            accom: "Ruaha River Lodge",
+          },
+          {
+            date: "3 Sept",
+            day: "3",
+            dest: "Morning and Afternoon Game Drives",
+            mp: "FB",
+            accom: "Ruaha River Lodge",
+          },
+          {
+            date: "4 Sept",
+            day: "4",
+            dest: "Walking Safari Experience",
+            mp: "FB",
+            accom: "Ruaha Hilltop Lodge",
+          },
+          {
+            date: "5 Sept",
+            day: "5",
+            dest: "Full day Wildlife Exploration in Ruaha National Park",
+            mp: "FB",
+            accom: "Ruaha Hilltop Lodge",
+          },
+          {
+            date: "6 Sept",
+            day: "6",
+            dest: "Cultural visit or Optional Activity",
+            mp: "FB",
+            accom: "Ruaha Hilltop Lodge",
+          },
+          {
+            date: "7 Sept",
+            day: "7",
+            dest: "Transfer to Airport for Departure",
+            mp: "HB",
+            accom: "",
+          },
+        ],
+        sections: {
+          transport: {
+            totalLabel: "Transport total costs",
+            lines: [
+              { label: "Flight", factors: [175, 2] },
+              { label: "Safari jeep", factors: [200, 7] },
+            ],
+          },
+          parkfees: {
+            totalLabel: "Total Park fee costs",
+            lines: [
+              { label: "Ruaha", factors: [30, 2] },
+              { label: "Concession", factors: [36, 2, 6] },
+              { label: "Ranger fee", factors: [25, 2] },
+              { label: "Walking Activity", factors: [25, 2] },
+              { label: "Cultural visit fee", factors: [100] },
+            ],
+          },
+          accommodation: {
+            totalLabel: "Total accommodation costs",
+            lines: [
+              { label: "Ruaha River Lodge", factors: [800] },
+              { label: "Ruaha Hilltop Lodge", factors: [600] },
+            ],
+          },
+        },
+      };
+
+      let ctrs = { transport: 0, parkfees: 0, accommodation: 0 };
+
+      // ── ITINERARY ──
+      function buildItinRow(d = {}) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+    <td><input class="cell-in" value="${d.date || ""}" placeholder="Date"></td>
+    <td><input class="cell-in" value="${d.day || ""}" placeholder="#" style="width:32px;text-align:center;"></td>
+    <td><input class="cell-in" value="${d.dest || ""}" placeholder="Destination / Activity…"></td>
+    <td><input class="cell-in mp" value="${d.mp || ""}" placeholder="FB"></td>
+    <td><input class="cell-in" value="${d.accom || ""}" placeholder="Lodge / Camp…"></td>
+    <td><button class="del-row" onclick="this.closest('tr').remove()">✕</button></td>`;
+        return tr;
+      }
+      function addItinRow(d) {
+        document.getElementById("itinBody").appendChild(buildItinRow(d));
+      }
+      function loadItin(rows) {
+        const b = document.getElementById("itinBody");
+        b.innerHTML = "";
+        rows.forEach((r) => b.appendChild(buildItinRow(r)));
+      }
+
+      // ── COST LINES ──
+      function addCostLine(sec, data = null) {
+        const id = sec + "_" + ++ctrs[sec];
+        const factors = data ? data.factors : [0];
+        const label = data ? data.label : "";
+        const container = document.getElementById("lines-" + sec);
+        const div = document.createElement("div");
+        div.className = "cost-line";
+        div.id = "line-" + id;
+
+        let fHTML = "";
+        factors.forEach((f, i) => {
+          if (i > 0) fHTML += `<span class="sep">✕</span>`;
+          fHTML += `<input type="number" class="rate-in factor" value="${f}" min="0" step="any" data-sec="${sec}" oninput="recalcLine('${id}')">`;
+        });
+
+        div.innerHTML = `
+    <input class="lbl-in" value="${label}" placeholder="Description…">
+    <div class="rate-box" id="rb-${id}">${fHTML}</div>
+    <button class="add-factor-btn" onclick="addFactor('${id}','${sec}')">+✕</button>
+    <span class="eq-sign">=</span>
+    <div class="result" id="res-${id}">0</div>
+    <button class="del-cost" onclick="removeLine('${id}','${sec}')" title="Remove">✕</button>`;
+
+        container.appendChild(div);
+        recalcLine(id);
+      }
+
+      function addFactor(id, sec) {
+        const box = document.getElementById("rb-" + id);
+        const sep = document.createElement("span");
+        sep.className = "sep";
+        sep.textContent = "✕";
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.className = "rate-in factor";
+        inp.value = 1;
+        inp.min = 0;
+        inp.step = "any";
+        inp.dataset.sec = sec;
+        inp.oninput = () => recalcLine(id);
+        box.appendChild(sep);
+        box.appendChild(inp);
+        recalcLine(id);
+      }
+
+      function removeLine(id, sec) {
+        const el = document.getElementById("line-" + id);
+        if (el) el.remove();
+        recalcSec(sec);
+      }
+
+      function recalcLine(id) {
+        const box = document.getElementById("rb-" + id);
+        if (!box) return;
+        let p = 1;
+        box
+          .querySelectorAll(".factor")
+          .forEach((i) => (p *= parseFloat(i.value) || 0));
+        const res = document.getElementById("res-" + id);
+        if (res) {
+          res.textContent = fmt(p);
+          const fi = box.querySelector(".factor");
+          if (fi) recalcSec(fi.dataset.sec);
+        }
+      }
+
+      function recalcSec(sec) {
+        let t = 0;
+        document
+          .getElementById("lines-" + sec)
+          .querySelectorAll(".result")
+          .forEach(
+            (r) => (t += parseFloat(r.textContent.replace(/,/g, "")) || 0),
+          );
+        document.getElementById("ttotal-" + sec).textContent = fmt(t);
+        recalcGrand();
+      }
+
+      function recalcAll() {
+        SECS.forEach((s) => recalcSec(s));
+      }
+
+      function recalcGrand() {
+        const t =
+          parseFloat(
+            (
+              document.getElementById("ttotal-transport").textContent || "0"
+            ).replace(/,/g, ""),
+          ) || 0;
+        const p =
+          parseFloat(
+            (
+              document.getElementById("ttotal-parkfees").textContent || "0"
+            ).replace(/,/g, ""),
+          ) || 0;
+        const a =
+          parseFloat(
+            (
+              document.getElementById("ttotal-accommodation").textContent || "0"
+            ).replace(/,/g, ""),
+          ) || 0;
+        const grand = t + p + a;
+        const margin =
+          parseFloat(document.getElementById("marginPct").value) || 0;
+        const selling = grand + (grand * margin) / 100;
+        const paxM = (
+          document.getElementById("docTitle").value || "2 PAX"
+        ).match(/(\d+)\s*PAX/i);
+        const pax = paxM ? parseInt(paxM[1]) : 2;
+        document.getElementById("grandFormula").textContent =
+          `Safari total costs   ${fmt(t)} + ${fmt(p)} + ${fmt(a)}`;
+        document.getElementById("grandTotal").textContent = fmt(grand);
+        document.getElementById("sellingPrice").textContent = fmt(selling);
+        document.getElementById("costPerPerson").textContent =
+          "$" + fmt(pax > 0 ? selling / pax : 0);
+      }
+
+      function fmt(n) {
+        const r = Math.round(n * 100) / 100;
+        return Number.isInteger(r)
+          ? r.toLocaleString("en-US")
+          : r.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      }
+
+      // ── SAVE / LOAD ──
+      function collectState() {
+        const itin = [];
+        document.querySelectorAll("#itinBody tr").forEach((tr) => {
+          const i = tr.querySelectorAll("input");
+          itin.push({
+            date: i[0]?.value || "",
+            ...(i[1] ? { day: i[1].value } : {}),
+            ...(i[2] ? { dest: i[2].value } : {}),
+            ...(i[3] ? { mp: i[3].value } : {}),
+            ...(i[4] ? { accom: i[4].value } : {}),
+          });
+        });
+        const sections = {};
+        SECS.forEach((sec) => {
+          const lines = [];
+          document
+            .getElementById("lines-" + sec)
+            .querySelectorAll(".cost-line")
+            .forEach((ld) => {
+              const lb = ld.querySelector(".lbl-in");
+              const factors = Array.from(ld.querySelectorAll(".factor")).map(
+                (i) => parseFloat(i.value) || 0,
+              );
+              lines.push({ label: lb?.value || "", factors });
+            });
+          sections[sec] = {
+            lines,
+            totalLabel: document.getElementById("tlbl-" + sec)?.value || "",
+          };
+        });
+        return {
+          title: document.getElementById("docTitle").value,
+          marginPct: document.getElementById("marginPct").value,
+          itin,
+          sections,
+        };
+      }
+
+      function applyState(s) {
+        document.getElementById("docTitle").value =
+          s.title || "SAFARI ITINERARY & COSTS";
+        document.getElementById("marginPct").value = s.marginPct || 10;
+        loadItin(s.itin || []);
+        SECS.forEach((sec) => {
+          ctrs[sec] = 0;
+          document.getElementById("lines-" + sec).innerHTML = "";
+          const sd = s.sections?.[sec];
+          if (sd) {
+            if (sd.totalLabel)
+              document.getElementById("tlbl-" + sec).value = sd.totalLabel;
+            (sd.lines || []).forEach((l) => addCostLine(sec, l));
+          }
+        });
+        recalcAll();
+      }
+
+      function saveData() {
+        localStorage.setItem("sereDoc", JSON.stringify(collectState()));
+        alert("✅ Saved!");
+      }
+      function loadData() {
+        const r = localStorage.getItem("sereDoc");
+        if (!r) {
+          alert("No saved data.");
+          return;
+        }
+        applyState(JSON.parse(r));
+        alert("✅ Loaded!");
+      }
+      function clearAll() {
+        if (!confirm("Clear everything?")) return;
+        document.getElementById("docTitle").value = "SAFARI ITINERARY & COSTS";
+        document.getElementById("marginPct").value = 10;
+        document.getElementById("itinBody").innerHTML = "";
+        SECS.forEach((sec) => {
+          ctrs[sec] = 0;
+          document.getElementById("lines-" + sec).innerHTML = "";
+        });
+        recalcAll();
+      }
+
+      // ── BOOT ──
+      (function init() {
+        const saved = localStorage.getItem("sereDoc");
+        if (saved) {
+          try {
+            applyState(JSON.parse(saved));
+            return;
+          } catch (e) {}
+        }
+        loadItin(DEFAULTS.itin);
+        SECS.forEach((sec) => {
+          const sd = DEFAULTS.sections[sec];
+          document.getElementById("tlbl-" + sec).value = sd.totalLabel;
+          sd.lines.forEach((l) => addCostLine(sec, l));
+        });
+        recalcAll();
+        document
+          .getElementById("marginPct")
+          .addEventListener("input", recalcAll);
+        document
+          .getElementById("docTitle")
+          .addEventListener("input", recalcAll);
+      })();
+    </script>
+  </body>
+</html>
