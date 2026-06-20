@@ -21,12 +21,23 @@ CREATE TABLE IF NOT EXISTS invoices (
   line_items       JSONB DEFAULT '[]',
   -- Totals (computed and stored for quick queries)
   subtotal         NUMERIC(14,2) DEFAULT 0,
-  total_amount     NUMERIC(14,2) DEFAULT 0,
+  discount         NUMERIC(14,2) DEFAULT 0,    -- entered manually
+  tax              NUMERIC(14,2) DEFAULT 0,    -- entered manually
+  total_amount     NUMERIC(14,2) DEFAULT 0,    -- subtotal - discount + tax
+  amount_paid      NUMERIC(14,2) DEFAULT 0,    -- entered manually
+  balance_due      NUMERIC(14,2) DEFAULT 0,    -- total_amount - amount_paid
   currency         TEXT DEFAULT 'USD',
   created_by       UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   created_at       TIMESTAMPTZ DEFAULT NOW(),
   updated_at       TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ── MIGRATION: add manual fields to an existing invoices table ──
+-- Safe to run repeatedly; only adds columns if missing.
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS discount    NUMERIC(14,2) DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS tax         NUMERIC(14,2) DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS amount_paid NUMERIC(14,2) DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS balance_due NUMERIC(14,2) DEFAULT 0;
 
 -- ── ROW LEVEL SECURITY ────────────────────────────
 ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;

@@ -1905,6 +1905,27 @@
         font-weight: 600;
         color: var(--earth-d);
       }
+      .inv-total-in {
+        min-width: 120px;
+        width: 120px;
+        text-align: right;
+        font-weight: 600;
+        color: var(--earth-d);
+        border: 1px solid var(--border2);
+        border-radius: 6px;
+        padding: 0.25rem 0.45rem;
+        font-size: 0.82rem;
+        background: #fff;
+      }
+      .inv-total-in:focus {
+        outline: none;
+        border-color: var(--sand2);
+      }
+      .inv-total-row.balance {
+        border-top: 1px dashed var(--earth-d);
+        font-weight: 700;
+        color: var(--earth-d);
+      }
       /* ── PDF PRINT INVOICE ── */
       @media print {
         body > *:not(#invPrintArea) {
@@ -2393,7 +2414,8 @@
           <span class="nav-badge" id="invoiceCount">0</span></a
         >
         <a class="nav-item" onclick="showSection('costs')"
-          ><i class="fa-solid fa-calculator"></i> Costs</a
+          ><i class="fa-solid fa-calculator"></i> Costs
+          <span class="nav-badge" id="costsCount">0</span></a
         >
         <div class="nav-section">Account</div>
         <a class="nav-item" onclick="signOut()"
@@ -2846,6 +2868,17 @@
                   style="font-size:14px; margin-top:4px;"
                   placeholder="Client Name..."
                 />
+                <input
+                  id="costsPax"
+                  class="costs-header-title-input"
+                  style="font-size:14px; margin-top:4px; width:90px; text-align:center;"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value="2"
+                  placeholder="Pax"
+                  oninput="costsSyncPax()"
+                />
                 <div class="costs-header-sub">SAFARI ASAP</div>
               </div>
             </div>
@@ -3052,9 +3085,49 @@
               <span class="inv-total-label">Sub Total:</span>
               <span class="inv-total-val" id="invSubtotalDisplay">$0.00</span>
             </div>
+            <div class="inv-total-row">
+              <span class="inv-total-label">Discount (USD):</span>
+              <input
+                class="inv-total-in"
+                type="number"
+                id="inv_discount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                oninput="recalcInvTotals()"
+              />
+            </div>
+            <div class="inv-total-row">
+              <span class="inv-total-label">Tax (USD):</span>
+              <input
+                class="inv-total-in"
+                type="number"
+                id="inv_tax"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                oninput="recalcInvTotals()"
+              />
+            </div>
             <div class="inv-total-row grand">
               <span class="inv-total-label">Total:</span>
               <span class="inv-total-val" id="invTotalDisplay">$0.00</span>
+            </div>
+            <div class="inv-total-row">
+              <span class="inv-total-label">Amount Paid (USD):</span>
+              <input
+                class="inv-total-in"
+                type="number"
+                id="inv_amount_paid"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                oninput="recalcInvTotals()"
+              />
+            </div>
+            <div class="inv-total-row balance">
+              <span class="inv-total-label">Balance Due (Not Paid):</span>
+              <span class="inv-total-val" id="invBalanceDisplay">$0.00</span>
             </div>
           </div>
 
@@ -35914,6 +35987,12 @@
           document.getElementById("inv_client_email").value =
             inv.client_email || "";
           document.getElementById("inv_notes").value = inv.notes || "";
+          document.getElementById("inv_discount").value =
+            inv.discount != null ? inv.discount : "";
+          document.getElementById("inv_tax").value =
+            inv.tax != null ? inv.tax : "";
+          document.getElementById("inv_amount_paid").value =
+            inv.amount_paid != null ? inv.amount_paid : "";
           const items = Array.isArray(inv.line_items) ? inv.line_items : [];
           if (items.length) items.forEach((r) => invAddRow(r));
           else invAddRow();
@@ -35997,15 +36076,27 @@
               rowTotal.toLocaleString("en-US", { minimumFractionDigits: 2 });
           sub += rowTotal;
         });
-        document.getElementById("invSubtotalDisplay").textContent =
-          "$" + sub.toLocaleString("en-US", { minimumFractionDigits: 2 });
-        document.getElementById("invTotalDisplay").textContent =
-          "$" + sub.toLocaleString("en-US", { minimumFractionDigits: 2 });
+        const discount =
+          parseFloat(document.getElementById("inv_discount").value) || 0;
+        const tax = parseFloat(document.getElementById("inv_tax").value) || 0;
+        const paid =
+          parseFloat(document.getElementById("inv_amount_paid").value) || 0;
+        const total = sub - discount + tax;
+        const balance = total - paid;
+        const fmt = (n) =>
+          "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2 });
+        document.getElementById("invSubtotalDisplay").textContent = fmt(sub);
+        document.getElementById("invTotalDisplay").textContent = fmt(total);
+        document.getElementById("invBalanceDisplay").textContent = fmt(balance);
       }
 
       function resetInvTotals() {
+        document.getElementById("inv_discount").value = "";
+        document.getElementById("inv_tax").value = "";
+        document.getElementById("inv_amount_paid").value = "";
         document.getElementById("invSubtotalDisplay").textContent = "$0.00";
         document.getElementById("invTotalDisplay").textContent = "$0.00";
+        document.getElementById("invBalanceDisplay").textContent = "$0.00";
       }
 
       /* ── Collect line items from DOM ── */
@@ -36047,6 +36138,13 @@
 
         const items = collectLineItems();
         const subtotal = items.reduce((s, r) => s + r.total, 0);
+        const discount =
+          parseFloat(document.getElementById("inv_discount").value) || 0;
+        const tax = parseFloat(document.getElementById("inv_tax").value) || 0;
+        const amountPaid =
+          parseFloat(document.getElementById("inv_amount_paid").value) || 0;
+        const totalAmount = subtotal - discount + tax;
+        const balanceDue = totalAmount - amountPaid;
 
         const payload = {
           invoice_number: invNum,
@@ -36059,7 +36157,11 @@
           notes: document.getElementById("inv_notes").value.trim() || null,
           line_items: items,
           subtotal: subtotal,
-          total_amount: subtotal,
+          discount: discount,
+          tax: tax,
+          total_amount: totalAmount,
+          amount_paid: amountPaid,
+          balance_due: balanceDue,
           currency: "USD",
         };
 
@@ -36234,10 +36336,38 @@
                 <span style="color:#888">Sub Total:</span>
                 <span style="font-weight:600">${fmtUSD(inv.subtotal || inv.total_amount)}</span>
               </div>
+              ${
+                inv.discount
+                  ? `<div style="display:flex;gap:40px;padding:6px 0;width:280px;justify-content:space-between">
+                <span style="color:#888">Discount:</span>
+                <span style="font-weight:600">-${fmtUSD(inv.discount)}</span>
+              </div>`
+                  : ""
+              }
+              ${
+                inv.tax
+                  ? `<div style="display:flex;gap:40px;padding:6px 0;width:280px;justify-content:space-between">
+                <span style="color:#888">Tax:</span>
+                <span style="font-weight:600">${fmtUSD(inv.tax)}</span>
+              </div>`
+                  : ""
+              }
               <div style="display:flex;gap:40px;padding:6px 0;border-top:2px solid #333;width:280px;justify-content:space-between">
                 <span style="font-weight:700">Total:</span>
                 <span style="font-weight:700;font-size:15px">${fmtUSD(inv.total_amount)}</span>
               </div>
+              ${
+                inv.amount_paid
+                  ? `<div style="display:flex;gap:40px;padding:6px 0;width:280px;justify-content:space-between">
+                <span style="color:#888">Amount Paid:</span>
+                <span style="font-weight:600">${fmtUSD(inv.amount_paid)}</span>
+              </div>
+              <div style="display:flex;gap:40px;padding:6px 0;border-top:1px dashed #333;width:280px;justify-content:space-between">
+                <span style="font-weight:700">Balance Due:</span>
+                <span style="font-weight:700;font-size:15px">${fmtUSD(inv.balance_due != null ? inv.balance_due : inv.total_amount - inv.amount_paid)}</span>
+              </div>`
+                  : ""
+              }
             </div>
             ${notesHtml}
           </div>`;
@@ -36464,10 +36594,10 @@
         const margin =
           parseFloat(document.getElementById("costsMarginPct").value) || 0;
         const selling = grand + (grand * margin) / 100;
-        const paxM = (
-          document.getElementById("costsDocTitle").value || "2 PAX"
-        ).match(/(\d+)\s*PAX/i);
-        const pax = paxM ? parseInt(paxM[1]) : 2;
+        // Cost per person is driven by the PAX field (true number of travellers),
+        // not by whatever number happens to be in the title.
+        const pax =
+          parseInt(document.getElementById("costsPax").value, 10) || 1;
         document.getElementById("costsGrandFormula").textContent =
           `Safari total costs   ${costsFmt(t)} + ${costsFmt(p)} + ${costsFmt(a)}`;
         document.getElementById("costsGrandTotal").textContent =
@@ -36476,6 +36606,20 @@
           costsFmt(selling);
         document.getElementById("costsPerPerson").textContent =
           "$" + costsFmt(pax > 0 ? selling / pax : 0);
+      }
+
+      // Mirror the PAX field into the title's "(N PAX)" so the saved estimate
+      // and the costs table column stay in sync, then recalculate.
+      function costsSyncPax() {
+        const pax =
+          parseInt(document.getElementById("costsPax").value, 10) || 1;
+        const t = document.getElementById("costsDocTitle");
+        if (/\(\s*\d+\s*PAX\s*\)/i.test(t.value)) {
+          t.value = t.value.replace(/\(\s*\d+\s*PAX\s*\)/i, `(${pax} PAX)`);
+        } else {
+          t.value = (t.value.trim() + ` (${pax} PAX)`).trim();
+        }
+        costsRecalcAll();
       }
 
       function costsFmt(n) {
@@ -36534,6 +36678,8 @@
         document.getElementById("costsClientName").value =
           s.client_name || "";
         document.getElementById("costsMarginPct").value = s.marginPct || 10;
+        const paxM = (s.title || "").match(/(\d+)\s*PAX/i);
+        document.getElementById("costsPax").value = paxM ? paxM[1] : 2;
         costsLoadItin(s.itin || []);
         COSTS_SECS.forEach((sec) => {
           costsCtrs[sec] = 0;
@@ -36557,6 +36703,8 @@
           const { data, error } = await window._sb.from("costs").select("*").order("created_at", { ascending: false });
           if (error) throw error;
           allCosts = data || [];
+          const badge = document.getElementById("costsCount");
+          if (badge) badge.textContent = allCosts.length;
           if (document.getElementById("sec-costs")?.classList.contains("active")) {
             renderCostTable(allCosts);
           }
@@ -36687,9 +36835,10 @@
       function costsClearAll(skipConfirm = false) {
         if (!skipConfirm && !confirm("Clear everything?")) return;
         document.getElementById("costsDocTitle").value =
-          "SAFARI ITINERARY & COSTS";
+          "SAFARI ITINERARY & COSTS (2 PAX)";
         document.getElementById("costsClientName").value = "";
         document.getElementById("costsMarginPct").value = 10;
+        document.getElementById("costsPax").value = 2;
         document.getElementById("costsItinBody").innerHTML = "";
         COSTS_SECS.forEach((sec) => {
           costsCtrs[sec] = 0;

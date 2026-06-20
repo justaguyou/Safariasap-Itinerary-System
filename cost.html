@@ -626,15 +626,26 @@
         <div class="header-logo">
           <img src="Logo.png" alt="" />
         </div>
-        <div class="header-text">
-          <input
-            id="docTitle"
-            class="header-title-input"
-            value="7-DAYS TANZANIA SAFARI ITINERARY &amp; COSTS (2 PAX)"
-            placeholder="Document title…"
-          />
-          <div class="header-sub">SAFARI ASAP</div>
-        </div>
+              <div class="header-text">
+                <input
+                  id="docTitle"
+                  class="header-title-input"
+                  value="7-DAYS TANZANIA SAFARI ITINERARY & COSTS (2 PAX)"
+                  placeholder="Document title…"
+                />
+                <input
+                  id="costsPax"
+                  class="header-title-input"
+                  style="font-size:14px; margin-top:4px; width:90px; text-align:center;"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value="2"
+                  placeholder="Pax"
+                  oninput="recalcAll()"
+                />
+                <div class="header-sub">SAFARI ASAP</div>
+              </div>
       </div>
 
       <!-- BODY -->
@@ -966,14 +977,12 @@
         const margin =
           parseFloat(document.getElementById("marginPct").value) || 0;
         const selling = grand + (grand * margin) / 100;
-        const paxM = (
-          document.getElementById("docTitle").value || "2 PAX"
-        ).match(/(\d+)\s*PAX/i);
-        const pax = paxM ? parseInt(paxM[1]) : 2;
+        const pax = parseInt(document.getElementById("costsPax").value) || 2;
         document.getElementById("grandFormula").textContent =
           `Safari total costs   ${fmt(t)} + ${fmt(p)} + ${fmt(a)}`;
         document.getElementById("grandTotal").textContent = fmt(grand);
         document.getElementById("sellingPrice").textContent = fmt(selling);
+        document.getElementById("costsCount").textContent = fmt(grand);
         document.getElementById("costPerPerson").textContent =
           "$" + fmt(pax > 0 ? selling / pax : 0);
       }
@@ -1022,6 +1031,7 @@
         return {
           title: document.getElementById("docTitle").value,
           marginPct: document.getElementById("marginPct").value,
+          pax: document.getElementById("costsPax").value,
           itin,
           sections,
         };
@@ -1031,6 +1041,7 @@
         document.getElementById("docTitle").value =
           s.title || "SAFARI ITINERARY & COSTS";
         document.getElementById("marginPct").value = s.marginPct || 10;
+        if (s.pax) document.getElementById("costsPax").value = s.pax;
         loadItin(s.itin || []);
         SECS.forEach((sec) => {
           ctrs[sec] = 0;
@@ -1062,6 +1073,7 @@
         if (!confirm("Clear everything?")) return;
         document.getElementById("docTitle").value = "SAFARI ITINERARY & COSTS";
         document.getElementById("marginPct").value = 10;
+        document.getElementById("costsPax").value = 2;
         document.getElementById("itinBody").innerHTML = "";
         SECS.forEach((sec) => {
           ctrs[sec] = 0;
