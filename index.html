@@ -574,6 +574,21 @@
               ></i>
             </div>
           </div>
+          <div style="text-align: right; margin-top: -0.4rem">
+            <a
+              href="#"
+              onclick="showForgotPanel(); return false;"
+              style="
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: var(--brand-orange);
+                text-decoration: none;
+              "
+              >Forgot password?</a
+            >
+          </div>
           <button class="btn-login" id="btnLogin" onclick="doLogin()">
             <span id="btnLoginText">Sign In</span>
             <i class="fa-solid fa-arrow-right" id="btnLoginArrow"></i>
@@ -607,6 +622,73 @@
           </button>
         </div>
 
+        <!-- FORGOT PASSWORD -->
+        <div id="panelForgot" style="display: none">
+          <div class="field">
+            <label>Email Address</label>
+            <div class="field-wrap">
+              <i class="fa-solid fa-envelope"></i>
+              <input
+                type="email"
+                id="forgotEmail"
+                placeholder="you@safariasp.com"
+                autocomplete="email"
+                onkeydown="if (event.key === 'Enter') doForgot();"
+              />
+            </div>
+          </div>
+          <button class="btn-login" id="btnForgot" onclick="doForgot()">
+            <span id="btnForgotText">Send Reset Link</span>
+            <i class="fa-solid fa-paper-plane" id="btnForgotIcon"></i>
+          </button>
+
+          <div class="divider">or</div>
+
+          <button class="btn-magic" onclick="showPasswordPanel()">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Sign In
+          </button>
+        </div>
+
+        <!-- SET NEW PASSWORD (after recovery link) -->
+        <div id="panelReset" style="display: none">
+          <div class="field">
+            <label>New Password</label>
+            <div class="field-wrap" style="position: relative">
+              <i class="fa-solid fa-lock"></i>
+              <input
+                type="password"
+                id="resetPassword"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                style="padding-right: 2.8rem"
+              />
+              <i
+                class="fa-solid fa-eye pw-toggle"
+                id="resetEyeToggle"
+                onclick="toggleResetPw()"
+              ></i>
+            </div>
+          </div>
+          <div class="field">
+            <label>Confirm New Password</label>
+            <div class="field-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input
+                type="password"
+                id="resetPasswordConfirm"
+                placeholder="••••••••"
+                autocomplete="new-password"
+                onkeydown="if (event.key === 'Enter') doResetPassword();"
+              />
+            </div>
+          </div>
+          <button class="btn-login" id="btnReset" onclick="doResetPassword()">
+            <span id="btnResetText">Update Password</span>
+            <i class="fa-solid fa-check" id="btnResetIcon"></i>
+          </button>
+        </div>
+
         <div class="form-footer">
           Problems signing in? Contact your<br />
           <a href="mailto:admin@safariasp.com">administrator</a>
@@ -617,19 +699,62 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
+      // If the user arrives via a password-recovery link, Supabase puts
+      // "type=recovery" in the URL hash and establishes a temporary session.
+      // In that case, show the "set new password" panel instead of redirecting.
+      const isRecovery = window.location.hash.includes("type=recovery");
+
+      window._sb.auth.onAuthStateChange((event) => {
+        if (event === "PASSWORD_RECOVERY") showResetPanel();
+      });
+
       (async () => {
+        if (isRecovery) {
+          showResetPanel();
+          return;
+        }
         const { data } = await window._sb.auth.getSession();
-        if (data.session) window.location.href = "admin.html";
+        if (data.session) window.location.href = "dashboard.html";
       })();
 
+      function hideAllPanels() {
+        [
+          "panelPassword",
+          "panelMagic",
+          "panelForgot",
+          "panelReset",
+        ].forEach((id) => {
+          document.getElementById(id).style.display = "none";
+        });
+      }
+      function setHeader(title, subtitleHTML) {
+        document.querySelector(".form-header h2").textContent = title;
+        document.querySelector(".form-header p").innerHTML = subtitleHTML;
+      }
       function showPasswordPanel() {
+        hideAllPanels();
         document.getElementById("panelPassword").style.display = "";
-        document.getElementById("panelMagic").style.display = "none";
+        setHeader("Sign In", 'SAFARI ASAP Admin — <a href="#">safariasp.com</a>');
         hideAlerts();
       }
       function showMagicPanel() {
-        document.getElementById("panelPassword").style.display = "none";
+        hideAllPanels();
         document.getElementById("panelMagic").style.display = "";
+        hideAlerts();
+      }
+      function showForgotPanel() {
+        hideAllPanels();
+        document.getElementById("panelForgot").style.display = "";
+        setHeader(
+          "Reset Password",
+          "Enter your email and we'll send you a reset link.",
+        );
+        hideAlerts();
+      }
+      function showResetPanel() {
+        hideAllPanels();
+        document.getElementById("panelReset").style.display = "";
+        setHeader("New Password", "Choose a new password for your account.");
         hideAlerts();
       }
       function hideAlerts() {
@@ -719,6 +844,77 @@
         } finally {
           btn.disabled = false;
           text.textContent = "Send Magic Link";
+        }
+      }
+
+      async function doForgot() {
+        const email = document.getElementById("forgotEmail").value.trim();
+        if (!email) {
+          showError("Please enter your email address.");
+          return;
+        }
+        const btn = document.getElementById("btnForgot");
+        const text = document.getElementById("btnForgotText");
+        btn.disabled = true;
+        text.textContent = "Sending…";
+        hideAlerts();
+        try {
+          const { error } = await window._sb.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + "/index.html",
+          });
+          if (error) throw error;
+          showSuccess(
+            "Password reset link sent to " + email + ". Check your inbox.",
+          );
+        } catch (e) {
+          showError(e.message || "Could not send reset link.");
+        } finally {
+          btn.disabled = false;
+          text.textContent = "Send Reset Link";
+        }
+      }
+
+      function toggleResetPw() {
+        const inp = document.getElementById("resetPassword");
+        const ico = document.getElementById("resetEyeToggle");
+        if (inp.type === "password") {
+          inp.type = "text";
+          ico.className = "fa-solid fa-eye-slash pw-toggle";
+        } else {
+          inp.type = "password";
+          ico.className = "fa-solid fa-eye pw-toggle";
+        }
+      }
+
+      async function doResetPassword() {
+        const pw = document.getElementById("resetPassword").value;
+        const confirm = document.getElementById("resetPasswordConfirm").value;
+        if (!pw || pw.length < 6) {
+          showError("Password must be at least 6 characters.");
+          return;
+        }
+        if (pw !== confirm) {
+          showError("Passwords do not match.");
+          return;
+        }
+        const btn = document.getElementById("btnReset");
+        const text = document.getElementById("btnResetText");
+        btn.disabled = true;
+        text.textContent = "Updating…";
+        hideAlerts();
+        try {
+          const { error } = await window._sb.auth.updateUser({ password: pw });
+          if (error) throw error;
+          showSuccess("Password updated! Redirecting to your dashboard…");
+          setTimeout(() => {
+            // Clear the recovery hash before navigating.
+            window.location.href =
+              window.location.origin + "/dashboard.html";
+          }, 1400);
+        } catch (e) {
+          showError(e.message || "Could not update password.");
+          btn.disabled = false;
+          text.textContent = "Update Password";
         }
       }
     </script>

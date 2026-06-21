@@ -2499,6 +2499,9 @@
           <span class="nav-badge" id="costsCount">0</span></a
         >
         <div class="nav-section">Account</div>
+        <a class="nav-item" onclick="openChangePassword()"
+          ><i class="fa-solid fa-key"></i> Change Password</a
+        >
         <a class="nav-item" onclick="signOut()"
           ><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a
         >
@@ -2921,6 +2924,60 @@
     <!-- hidden print area -->
     <div id="invPrintArea"></div>
     <div id="costsPrintArea"></div>
+
+    <!-- ══════════════ CHANGE PASSWORD MODAL ══════════════ -->
+    <div class="modal-overlay" id="changePwModal">
+      <div class="modal" style="max-width: 460px">
+        <div class="modal-hdr">
+          <h2><i class="fa-solid fa-key"></i> Change Password</h2>
+          <button class="modal-close" onclick="closeModal('changePwModal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="changePwAlert"
+            style="
+              display: none;
+              padding: 0.7rem 0.9rem;
+              font-size: 0.78rem;
+              font-weight: 600;
+              margin-bottom: 1rem;
+              border-left: 3px solid;
+            "
+          ></div>
+          <div class="field">
+            <label>New Password <span class="req">*</span></label>
+            <input
+              type="password"
+              id="newPassword"
+              class="f-input"
+              placeholder="••••••••"
+              autocomplete="new-password"
+            />
+            <div class="field-hint">Must be at least 6 characters.</div>
+          </div>
+          <div class="field">
+            <label>Confirm New Password <span class="req">*</span></label>
+            <input
+              type="password"
+              id="newPasswordConfirm"
+              class="f-input"
+              placeholder="••••••••"
+              autocomplete="new-password"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('changePwModal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="btnChangePw" onclick="doChangePassword()">
+            <i class="fa-solid fa-check"></i> Update Password
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ══════════════ COST MODAL ══════════════ -->
     <div class="modal-overlay" id="costModal">
@@ -31606,6 +31663,55 @@
       async function signOut() {
         await window._sb.auth.signOut();
         window.location.href = "index.html";
+      }
+
+      /* ════ CHANGE PASSWORD ════ */
+      function openChangePassword() {
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newPasswordConfirm").value = "";
+        changePwAlert("", "");
+        document.getElementById("changePwModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      function changePwAlert(msg, type) {
+        const el = document.getElementById("changePwAlert");
+        if (!msg) {
+          el.style.display = "none";
+          return;
+        }
+        const ok = type === "success";
+        el.style.display = "block";
+        el.style.background = ok ? "#f0fdf4" : "#fdf0f0";
+        el.style.color = ok ? "#1a5e2a" : "#7a2323";
+        el.style.borderColor = ok ? "#27ae60" : "#c0392b";
+        el.textContent = msg;
+      }
+      async function doChangePassword() {
+        const pw = document.getElementById("newPassword").value;
+        const confirm = document.getElementById("newPasswordConfirm").value;
+        if (!pw || pw.length < 6) {
+          changePwAlert("Password must be at least 6 characters.", "error");
+          return;
+        }
+        if (pw !== confirm) {
+          changePwAlert("Passwords do not match.", "error");
+          return;
+        }
+        const btn = document.getElementById("btnChangePw");
+        btn.disabled = true;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating…';
+        try {
+          const { error } = await window._sb.auth.updateUser({ password: pw });
+          if (error) throw error;
+          changePwAlert("Password updated successfully.", "success");
+          setTimeout(() => closeModal("changePwModal"), 1400);
+        } catch (e) {
+          changePwAlert(e.message || "Could not update password.", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = orig;
+        }
       }
 
       /* ════ MODAL HELPERS ════ */
