@@ -745,6 +745,51 @@
         gap: 0.7rem;
         flex-wrap: wrap;
       }
+      /* ── Admin-only elements (revealed by body.role-admin) ── */
+      .admin-only {
+        display: none !important;
+      }
+      body.role-admin .admin-only {
+        display: revert !important;
+      }
+      body.role-admin .nav-item.admin-only {
+        display: flex !important;
+      }
+      .col-creator {
+        display: none;
+      }
+      body.role-admin .col-creator {
+        display: table-cell;
+      }
+      .role-pill {
+        display: inline-block;
+        padding: 0.18rem 0.55rem;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border-radius: 2px;
+      }
+      .role-pill.super_admin {
+        background: rgba(241, 146, 51, 0.18);
+        color: #b5651d;
+      }
+      .role-pill.editor {
+        background: rgba(74, 94, 74, 0.15);
+        color: #3d5a3d;
+      }
+      .user-status {
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .user-status.active {
+        color: #1a7a3a;
+      }
+      .user-status.inactive {
+        color: #b03a2e;
+      }
       /* TABS */
       .tabs {
         display: flex;
@@ -2499,6 +2544,10 @@
           <span class="nav-badge" id="costsCount">0</span></a
         >
         <div class="nav-section">Account</div>
+        <a class="nav-item admin-only" onclick="showSection('users')"
+          ><i class="fa-solid fa-users-gear"></i> Users
+          <span class="nav-badge" id="userCount">0</span></a
+        >
         <a class="nav-item" onclick="openChangePassword()"
           ><i class="fa-solid fa-key"></i> Change Password</a
         >
@@ -2642,12 +2691,13 @@
                     <th>Group</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th class="col-creator">Created By</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="itinTbody">
                   <tr>
-                    <td colspan="8" style="text-align: center; padding: 2rem">
+                    <td colspan="9" style="text-align: center; padding: 2rem">
                       <div class="spin"></div>
                     </td>
                   </tr>
@@ -2868,12 +2918,13 @@
                     <th>Due Date</th>
                     <th>Amount (USD)</th>
                     <th>Status</th>
+                    <th class="col-creator">Created By</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="invTbody">
                   <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem">
+                    <td colspan="8" style="text-align: center; padding: 2rem">
                       <div class="spin"></div>
                     </td>
                   </tr>
@@ -2908,11 +2959,55 @@
                     <th>Pax</th>
                     <th>Cost/Pax</th>
                     <th>Total</th>
+                    <th class="col-creator">Created By</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="costsTbody">
-                  <tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin"></div></td></tr>
+                  <tr><td colspan="8" style="text-align:center;padding:2rem"><div class="spin"></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- USERS (super-admin only) -->
+        <section class="page-section" id="sec-users">
+          <div class="page-hdr">
+            <div>
+              <h1>
+                <i
+                  class="fa-solid fa-users-gear"
+                  style="color: var(--sand2); margin-right: 0.5rem"
+                ></i
+                >Users
+              </h1>
+              <p>Manage who can access the Safari ASAP admin system</p>
+            </div>
+            <button class="btn btn-sand" onclick="openNewUserModal()">
+              <i class="fa-solid fa-user-plus"></i> New User
+            </button>
+          </div>
+
+          <div class="card" style="padding: 0">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem">
+                      <div class="spin"></div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -2924,6 +3019,129 @@
     <!-- hidden print area -->
     <div id="invPrintArea"></div>
     <div id="costsPrintArea"></div>
+
+    <!-- ══════════════ NEW USER MODAL (admin) ══════════════ -->
+    <div class="modal-overlay" id="newUserModal">
+      <div class="modal" style="max-width: 480px">
+        <div class="modal-hdr">
+          <h2><i class="fa-solid fa-user-plus"></i> New User</h2>
+          <button class="modal-close" onclick="closeModal('newUserModal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="newUserAlert"
+            style="
+              display: none;
+              padding: 0.7rem 0.9rem;
+              font-size: 0.78rem;
+              font-weight: 600;
+              margin-bottom: 1rem;
+              border-left: 3px solid;
+            "
+          ></div>
+          <div class="field">
+            <label>Username <span class="req">*</span></label>
+            <input
+              type="text"
+              id="nu_username"
+              class="f-input"
+              placeholder="e.g. jane"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label>Email <span class="req">*</span></label>
+            <input
+              type="email"
+              id="nu_email"
+              class="f-input"
+              placeholder="jane@safariasap.com"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label>Password <span class="req">*</span></label>
+            <input
+              type="text"
+              id="nu_password"
+              class="f-input"
+              placeholder="At least 6 characters"
+              autocomplete="new-password"
+            />
+            <div class="field-hint">
+              Share this with the user — they can change it later.
+            </div>
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <select id="nu_role" class="f-select">
+              <option value="editor">Editor (standard user)</option>
+              <option value="super_admin">Super Admin (full access)</option>
+            </select>
+            <div class="field-hint">
+              Editors only see their own itineraries, invoices and costs.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('newUserModal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="btnNewUser" onclick="doCreateUser()">
+            <i class="fa-solid fa-user-plus"></i> Create User
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ RESET USER PASSWORD MODAL (admin) ══════════════ -->
+    <div class="modal-overlay" id="resetUserModal">
+      <div class="modal" style="max-width: 460px">
+        <div class="modal-hdr">
+          <h2><i class="fa-solid fa-key"></i> Reset Password</h2>
+          <button class="modal-close" onclick="closeModal('resetUserModal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div
+            id="resetUserAlert"
+            style="
+              display: none;
+              padding: 0.7rem 0.9rem;
+              font-size: 0.78rem;
+              font-weight: 600;
+              margin-bottom: 1rem;
+              border-left: 3px solid;
+            "
+          ></div>
+          <p style="font-size: 0.82rem; color: var(--warm); margin-bottom: 1rem">
+            Set a new password for
+            <strong id="resetUserName" style="color: var(--earth-d)"></strong>.
+          </p>
+          <div class="field">
+            <label>New Password <span class="req">*</span></label>
+            <input
+              type="text"
+              id="ru_password"
+              class="f-input"
+              placeholder="At least 6 characters"
+              autocomplete="new-password"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('resetUserModal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="btnResetUser" onclick="doResetUserPw()">
+            <i class="fa-solid fa-check"></i> Update Password
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ══════════════ CHANGE PASSWORD MODAL ══════════════ -->
     <div class="modal-overlay" id="changePwModal">
@@ -31591,6 +31809,11 @@
         allDests = [],
         allAccoms = [],
         allGalImgs = [];
+      /* current user / role */
+      let CURRENT_USER = null; // { id, email, username, role }
+      let IS_ADMIN = false;
+      let allUsers = []; // admin_profiles rows (admin only)
+      const USER_MAP = {}; // user id -> { username, email }
       let editingItinId = null,
         editingDestId = null,
         editingAccomId = null;
@@ -31630,8 +31853,43 @@
           window.location.href = "index.html";
           return;
         }
-        document.getElementById("adminEmail").textContent =
-          data.session.user.email;
+        const authUser = data.session.user;
+
+        // Determine this account's role from admin_profiles.
+        const { data: profile } = await window._sb
+          .from("admin_profiles")
+          .select("id, email, username, role, is_active")
+          .eq("id", authUser.id)
+          .maybeSingle();
+
+        // A deactivated account is signed out immediately.
+        if (profile && profile.is_active === false) {
+          await window._sb.auth.signOut();
+          window.location.href = "index.html";
+          return;
+        }
+
+        CURRENT_USER = {
+          id: authUser.id,
+          email: authUser.email,
+          username:
+            (profile && profile.username) ||
+            authUser.user_metadata?.username ||
+            authUser.email,
+          // No profile row => treat as a regular editor (sees only own data).
+          role: (profile && profile.role) || "editor",
+        };
+        IS_ADMIN = CURRENT_USER.role === "super_admin";
+
+        // Reveal admin-only UI (Users nav + "Created By" columns).
+        if (IS_ADMIN) document.body.classList.add("role-admin");
+
+        document.getElementById("adminEmail").textContent = CURRENT_USER.email;
+
+        // Admins get the full creator map + the Users list.
+        if (IS_ADMIN) await loadUsers();
+        else USER_MAP[CURRENT_USER.id] = CURRENT_USER;
+
         await Promise.all([
           loadItins(),
           loadDests(),
@@ -31659,6 +31917,7 @@
   if (name === "gallery") renderGalGrid();
   if (name === "invoices") { renderInvoiceTable(allInvoices); updateInvoiceStats(); }
   if (name === "costs") { renderCostTable(allCosts); }
+  if (name === "users") { if (IS_ADMIN) renderUserTable(); else showSection('dashboard'); }
 }
       async function signOut() {
         await window._sb.auth.signOut();
@@ -31711,6 +31970,271 @@
         } finally {
           btn.disabled = false;
           btn.innerHTML = orig;
+        }
+      }
+
+      /* ════ USERS / ROLES (super-admin only) ════ */
+
+      // Display name for a created_by user id.
+      function creatorName(id) {
+        if (!id) return "—";
+        if (CURRENT_USER && id === CURRENT_USER.id) return "You";
+        const u = USER_MAP[id];
+        if (!u) return "—";
+        return u.username || u.email || "—";
+      }
+
+      // Calls the admin-users Edge Function (holds the service_role key).
+      async function callAdminUsers(payload) {
+        const { data, error } = await window._sb.functions.invoke(
+          "admin-users",
+          { body: payload },
+        );
+        if (error) {
+          let msg = error.message || "Request failed.";
+          // The real reason is in the Response body (error.context).
+          try {
+            const res = error.context;
+            if (res && typeof res.text === "function") {
+              const txt = await res.text();
+              if (txt) {
+                try {
+                  const j = JSON.parse(txt);
+                  if (j && j.error) msg = j.error;
+                } catch (_) {
+                  msg = txt;
+                }
+              }
+            }
+          } catch (_) {}
+          throw new Error(msg);
+        }
+        if (data && data.error) throw new Error(data.error);
+        return data;
+      }
+
+      async function loadUsers() {
+        const { data, error } = await window._sb
+          .from("admin_profiles")
+          .select("id, email, username, role, is_active, created_at")
+          .order("created_at", { ascending: true });
+        if (error) {
+          // Non-admins are blocked by RLS — silently ignore.
+          return;
+        }
+        allUsers = data || [];
+        // Refresh the id -> name map used by the "Created By" columns.
+        for (const u of allUsers) USER_MAP[u.id] = u;
+        const badge = document.getElementById("userCount");
+        if (badge) badge.textContent = allUsers.length;
+        renderUserTable();
+      }
+
+      function userDate(ts) {
+        if (!ts) return "—";
+        const d = new Date(ts);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+      }
+
+      function renderUserTable() {
+        const tb = document.getElementById("usersTbody");
+        if (!tb) return;
+        if (!allUsers.length) {
+          tb.innerHTML =
+            '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--warm)">No users yet.</td></tr>';
+          return;
+        }
+        tb.innerHTML = allUsers
+          .map((u) => {
+            const isSelf = CURRENT_USER && u.id === CURRENT_USER.id;
+            const active = u.is_active !== false;
+            return (
+              "<tr>" +
+              '<td><span class="tbl-title">' +
+              esc(u.username || "—") +
+              (isSelf
+                ? ' <span class="tbl-sub" style="display:inline">(you)</span>'
+                : "") +
+              "</span></td>" +
+              "<td>" +
+              esc(u.email || "—") +
+              "</td>" +
+              '<td><span class="role-pill ' +
+              esc(u.role || "editor") +
+              '">' +
+              (u.role === "super_admin" ? "Super Admin" : "Editor") +
+              "</span></td>" +
+              '<td><span class="user-status ' +
+              (active ? "active" : "inactive") +
+              '">' +
+              (active ? "Active" : "Inactive") +
+              "</span></td>" +
+              "<td>" +
+              userDate(u.created_at) +
+              "</td>" +
+              '<td><div style="display:flex;gap:.35rem;flex-wrap:wrap">' +
+              '<button class="btn-icon edit" title="Reset password" onclick="openResetUserPw(\'' +
+              u.id +
+              "')\"><i class=\"fa-solid fa-key\"></i></button>" +
+              (isSelf
+                ? ""
+                : '<button class="btn-icon" title="' +
+                  (active ? "Deactivate" : "Activate") +
+                  '" onclick="toggleUserActive(\'' +
+                  u.id +
+                  "')\"><i class=\"fa-solid fa-" +
+                  (active ? "user-slash" : "user-check") +
+                  '"></i></button>' +
+                  '<button class="btn-icon del" title="Delete" onclick="deleteUser(\'' +
+                  u.id +
+                  "','" +
+                  esc(u.username || u.email || "").replace(/'/g, "\\'") +
+                  "')\"><i class=\"fa-solid fa-trash\"></i></button>") +
+              "</div></td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      /* ── New user modal ── */
+      function userAlert(msg, type) {
+        const el = document.getElementById("newUserAlert");
+        if (!msg) {
+          el.style.display = "none";
+          return;
+        }
+        const ok = type === "success";
+        el.style.display = "block";
+        el.style.background = ok ? "#f0fdf4" : "#fdf0f0";
+        el.style.color = ok ? "#1a5e2a" : "#7a2323";
+        el.style.borderColor = ok ? "#27ae60" : "#c0392b";
+        el.textContent = msg;
+      }
+      function openNewUserModal() {
+        if (!IS_ADMIN) return;
+        document.getElementById("nu_username").value = "";
+        document.getElementById("nu_email").value = "";
+        document.getElementById("nu_password").value = "";
+        document.getElementById("nu_role").value = "editor";
+        userAlert("", "");
+        document.getElementById("newUserModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      async function doCreateUser() {
+        const username = document.getElementById("nu_username").value.trim();
+        const email = document.getElementById("nu_email").value.trim();
+        const password = document.getElementById("nu_password").value;
+        const role = document.getElementById("nu_role").value;
+        if (!username || !email || !password) {
+          userAlert("Username, email and password are all required.", "error");
+          return;
+        }
+        if (password.length < 6) {
+          userAlert("Password must be at least 6 characters.", "error");
+          return;
+        }
+        const btn = document.getElementById("btnNewUser");
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating…';
+        try {
+          await callAdminUsers({ action: "create", username, email, password, role });
+          userAlert("User created successfully.", "success");
+          await loadUsers();
+          setTimeout(() => closeModal("newUserModal"), 1000);
+        } catch (e) {
+          userAlert(e.message || "Could not create user.", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = orig;
+        }
+      }
+
+      /* ── Reset another user's password ── */
+      let resetUserId = null;
+      function resetUserAlert(msg, type) {
+        const el = document.getElementById("resetUserAlert");
+        if (!msg) {
+          el.style.display = "none";
+          return;
+        }
+        const ok = type === "success";
+        el.style.display = "block";
+        el.style.background = ok ? "#f0fdf4" : "#fdf0f0";
+        el.style.color = ok ? "#1a5e2a" : "#7a2323";
+        el.style.borderColor = ok ? "#27ae60" : "#c0392b";
+        el.textContent = msg;
+      }
+      function openResetUserPw(id) {
+        if (!IS_ADMIN) return;
+        resetUserId = id;
+        const u = allUsers.find((x) => x.id === id);
+        document.getElementById("resetUserName").textContent = u
+          ? u.username || u.email
+          : "";
+        document.getElementById("ru_password").value = "";
+        resetUserAlert("", "");
+        document.getElementById("resetUserModal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+      async function doResetUserPw() {
+        const password = document.getElementById("ru_password").value;
+        if (!password || password.length < 6) {
+          resetUserAlert("Password must be at least 6 characters.", "error");
+          return;
+        }
+        const btn = document.getElementById("btnResetUser");
+        const orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+        try {
+          await callAdminUsers({ action: "reset_password", id: resetUserId, password });
+          resetUserAlert("Password updated.", "success");
+          setTimeout(() => closeModal("resetUserModal"), 1000);
+        } catch (e) {
+          resetUserAlert(e.message || "Could not reset password.", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = orig;
+        }
+      }
+
+      async function toggleUserActive(id) {
+        const u = allUsers.find((x) => x.id === id);
+        if (!u) return;
+        const next = !(u.is_active !== false);
+        const { error } = await window._sb
+          .from("admin_profiles")
+          .update({ is_active: next })
+          .eq("id", id);
+        if (error) {
+          toast("Could not update user: " + error.message, "error");
+          return;
+        }
+        u.is_active = next;
+        renderUserTable();
+        toast(next ? "User activated." : "User deactivated.", "success");
+      }
+
+      async function deleteUser(id, name) {
+        if (!confirm('Delete user "' + name + '"? This cannot be undone.'))
+          return;
+        try {
+          await callAdminUsers({ action: "delete", id });
+          allUsers = allUsers.filter((x) => x.id !== id);
+          delete USER_MAP[id];
+          const badge = document.getElementById("userCount");
+          if (badge) badge.textContent = allUsers.length;
+          renderUserTable();
+          toast("User deleted.", "success");
+        } catch (e) {
+          toast(e.message || "Could not delete user.", "error");
         }
       }
 
@@ -31883,6 +32407,9 @@
               "<td>" +
               statusBadge(it.status) +
               "</td>" +
+              '<td class="col-creator"><span class="tbl-sub">' +
+              esc(creatorName(it.created_by)) +
+              "</span></td>" +
               '<td><div style="display:flex;gap:.35rem">' +
               '<button class="btn-icon edit" onclick="openItinModal(\'' +
               it.id +
@@ -36112,6 +36639,7 @@
             <td>${inv.due_date ? fmtDate(inv.due_date) : "—"}</td>
             <td><strong>${amt}</strong></td>
             <td><span class="badge ${statusCls}">${(inv.status || "draft").toUpperCase()}</span></td>
+            <td class="col-creator"><span class="tbl-sub">${esc(creatorName(inv.created_by))}</span></td>
             <td>
               <div style="display:flex;gap:5px;flex-wrap:wrap">
                 <button class="btn-icon edit" title="Edit" onclick="openInvoiceModal('${inv.id}')"><i class="fa-solid fa-pen"></i></button>
@@ -36916,6 +37444,7 @@
             <td>${(c.title || "").match(/(\d+)\s*PAX/i)?.[1] || "—"}</td>
             <td style="font-weight:600">$${costsFmt(c.cost_per_person)}</td>
             <td style="font-weight:600">$${costsFmt(c.selling_price)}</td>
+            <td class="col-creator"><span class="tbl-sub">${esc(creatorName(c.created_by))}</span></td>
             <td>
               <button class="btn btn-xs btn-outline" onclick="openCostModal('${c.id}')"><i class="fa-solid fa-pen"></i></button>
               <button class="btn btn-xs btn-outline" onclick="printCost('${c.id}')"><i class="fa-solid fa-print"></i></button>
